@@ -1,0 +1,12 @@
+name: BlockBreakSpeed
+version: '${project.version}'
+main: me.walcriz.blockbreakspeed.Main
+api-version: 1.19
+authors: [Walcriz]
+website: walcriz.net
+
+depend: [ ProtocolLib ]
+
+commands:
+  bbsreload:
+    permission: blockbreakspeed.config.reload

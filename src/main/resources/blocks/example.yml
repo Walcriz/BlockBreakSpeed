@@ -1,0 +1,9 @@
+# THIS FILE WILL BE IGNORED!
+
+# The material of the block
+block: STONE
+
+# This value later gets divided by 100
+# See how minecraft calculates breaking speeds: https://minecraft.fandom.com/wiki/Breaking#Calculation
+# TODO: Calculate in plugin
+hardness-target: 200

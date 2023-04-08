@@ -1,0 +1,10 @@
+
+# Ticks between every mining check
+mining-check-ticks: 5
+
+animations:
+  # Disable packets that make the hand animate
+  disable: false
+
+  # The delay in TICKS between the player playing the "hit" animation
+  delay: 10
