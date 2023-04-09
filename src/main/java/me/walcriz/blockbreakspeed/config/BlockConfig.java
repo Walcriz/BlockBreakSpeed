@@ -41,10 +41,11 @@ public class BlockConfig {
         // hardnessTarget = 0.2x * 0.3^y
         // y = log(ht/0.2x) / log(0.3)
         // where ht = hardnessTarget
-        Function<Double, Double> solveForY = (x) -> Math.log(hardnessTarget / (hasteIncrease * x)) / Math.log(fatigueMultiplier);
+        Function<Double, Double> solveForY = (x) -> Math.log(hardnessTarget / (hasteIncrease * x + 1)) / Math.log(fatigueMultiplier);
 
         int xValue = -1;
         int yValue = -1;
+        double yValueFull = -1;
         for (int x = 0; x < hasteMaxLevel; x++) {
             double y = solveForY.apply((double) x);
 
@@ -57,10 +58,15 @@ public class BlockConfig {
             if (y % 1 == 0) { // Prefer whole numbers
                 xValue = x;
                 yValue = (int) Math.floor(y);
-                break; // We know two good values. Stop iterating
+                break; // We know two very good values. Stop iterating
             } else if (yValue < 0) {
                 xValue = x;
                 yValue = (int) Math.round(y);
+                yValueFull = y;
+            } else if (Math.abs(y - Math.round(y)) < Math.abs(yValueFull - Math.round(yValueFull))) { // If we found a more exact number. Use that
+                xValue = x;
+                yValue = (int) Math.round(y);
+                yValueFull = y;
             }
         }
 
