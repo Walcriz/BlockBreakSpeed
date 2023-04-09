@@ -45,7 +45,7 @@ public class BlockConfig {
 
         int xValue = -1;
         int yValue = -1;
-        for (int x = 3; x < hasteMaxLevel; x++) {
+        for (int x = 0; x < hasteMaxLevel; x++) {
             double y = solveForY.apply((double) x);
 
             if (y < 0) // y cant be less than 0 or

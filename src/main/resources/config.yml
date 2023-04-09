@@ -1,6 +1,6 @@
 
 # Ticks between every mining check
-mining-check-ticks: 5
+mining-check-delay: 5
 
 animations:
   # Disable packets that make the hand animate

@@ -8,7 +8,7 @@ public class Config {
         FileConfiguration config = main.getConfig();
         this.disableAnimations = config.getBoolean("animations.disable");
         this.animationDelay = config.getInt("animations.delay");
-        this.miningCheckTicks = config.getInt("mining-check-ticks");
+        this.miningCheckTicks = config.getInt("mining-check-delay");
     }
 
     public boolean disableAnimations = false;

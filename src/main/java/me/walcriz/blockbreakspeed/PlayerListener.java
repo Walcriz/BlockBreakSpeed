@@ -22,7 +22,7 @@ public class PlayerListener implements Listener {
     private int checkTask = -1;
 
     @EventHandler
-    public void onLeftClick(PlayerInteractEvent event) {
+    public void onLeftClickOnBlock(PlayerInteractEvent event) {
         if (event.getAction() != Action.LEFT_CLICK_BLOCK)
             return;
 
@@ -93,6 +93,9 @@ public class PlayerListener implements Listener {
     }
 
     public void playAnimation(Player player) {
+        if (Main.config.disableAnimations)
+            return;
+
         PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.ANIMATION);
         packetContainer.getIntegers().write(0, player.getEntityId());
         packetContainer.getIntegers().write(0, 1);
