@@ -73,7 +73,7 @@ public class BlockConfig {
         for (int x = 0; x < hasteMaxLevel; x++) {
             double y = solveForY.apply((double) x);
 
-            if (y < 0) // y cant be less than 0 or
+            if (y < 0) // y cant be less than 0
                 continue;
 
             if (y > fatigueMaxLevel) // y cant be higher than 4 (A minecraft restriction)

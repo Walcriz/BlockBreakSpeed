@@ -5,14 +5,11 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public record Hardness(int base, int min, int max) {
 
     /**
-     * Calculate the hardness in procent. Used in the {@link BlockConfig#getEffectValues(BreakModifierMap, Player, ItemStack, Block)} calculation
+     * Calculate the speed multiplier (hardness in procent) in procent. Used in the {@link BlockConfig#getEffectValues(BreakModifierMap, Player, ItemStack, Block)} calculation
      * @param modifierMap The current active states for the block
      * @param player The player trying to mine the block
      * @param block The block that is being mined
@@ -26,8 +23,8 @@ public record Hardness(int base, int min, int max) {
         double damage = 1d / ticks;
         damage *= block.getBreakSpeed(player);
 
-//        damage *= block.getBreakSpeed() ? 100 : 30; // Do I really have to make my own list of every block? That'd be a pain
-        damage *= 100; // Temporary
+        damage *= block.getDrops(heldItem).size() > 0 ? 100 : 30; // Do I really have to make my own list of every block? That'd be a pain
+        // Maybe not this seems to be the good "hacky" way to do it
 
         double speedMultiplier = damage * block.getType().getHardness();
 
