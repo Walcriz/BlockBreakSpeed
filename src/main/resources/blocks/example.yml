@@ -5,5 +5,18 @@ block: STONE
 
 # This value later gets divided by 100
 # See how minecraft calculates breaking speeds: https://minecraft.fandom.com/wiki/Breaking#Calculation
-# TODO: Calculate in plugin
-hardness-target: 200
+hardness:
+  keep-vanilla-hardness-modifiers: false # Please forgive the long name
+
+  base: 20 # In TICKS
+  min: 5
+  max: 30
+
+states:
+  - helditem{type=diamond_pickaxe;value=5}
+  - sneaking{value=10}
+  - helditem{type=iron_pickaxe}
+
+triggers:
+  - break{command=say I broke a block!}
+  - start{command=!say I started breaking a block!}

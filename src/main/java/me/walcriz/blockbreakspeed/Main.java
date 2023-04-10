@@ -2,9 +2,10 @@ package me.walcriz.blockbreakspeed;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import me.walcriz.blockbreakspeed.block.BlockManager;
+import me.walcriz.blockbreakspeed.block.Hardness;
 import me.walcriz.blockbreakspeed.commands.ReloadCommand;
-import me.walcriz.blockbreakspeed.config.BlockConfig;
-import me.walcriz.blockbreakspeed.config.Config;
+import me.walcriz.blockbreakspeed.block.BlockConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -27,7 +28,6 @@ public final class Main extends JavaPlugin {
     public static ProtocolManager getProtocolManager() { return protocolManager; }
 
     public static Config config;
-    public static EnumMap<Material, BlockConfig> blockConfigs = new EnumMap<>(Material.class);
 
     public File blockFolder;
 
@@ -64,6 +64,8 @@ public final class Main extends JavaPlugin {
     }
 
     private void loadBlockConfigs() {
+        BlockManager manager = BlockManager.getInstance();
+
         File[] configs = blockFolder.listFiles();
         if (configs == null)
             return;
@@ -76,7 +78,10 @@ public final class Main extends JavaPlugin {
             try {
                 configuration.load(blockConfig);
                 String materialName = configuration.getString("block");
-                int hardness = configuration.getInt("hardness-target");
+                Hardness hardness = new Hardness(configuration.getInt("hardness.base"), configuration.getInt("hardness.min"), configuration.getInt("hardness.max"));
+                String[] modifierStrings = configuration.getStringList("states").toArray(new String[0]);
+                String[] triggerStrings = configuration.getStringList("triggers").toArray(new String[0]);
+
                 if (materialName == null) {
                     logger.warning("Incomplete configuration at file: " + blockConfig.getAbsolutePath());
                     continue;
@@ -88,7 +93,7 @@ public final class Main extends JavaPlugin {
                     continue;
                 }
 
-                blockConfigs.put(material, new BlockConfig(hardness, material));
+                manager.getBlockConfigMap().put(material, new BlockConfig(hardness, material, modifierStrings, triggerStrings));
             } catch (IOException e) {
                 logger.severe("IOException was created whilst loading config from file: " + blockConfig.getAbsolutePath());
                 e.printStackTrace();
@@ -100,7 +105,8 @@ public final class Main extends JavaPlugin {
     }
 
     public void reloadBlockConfigs() {
-        blockConfigs = new EnumMap<>(Material.class);
+        BlockManager manager = BlockManager.getInstance();
+        manager.clearBlockConfigs();
         loadBlockConfigs();
 
         playerListener.cancelTask();

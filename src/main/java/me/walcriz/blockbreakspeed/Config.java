@@ -1,9 +1,18 @@
-package me.walcriz.blockbreakspeed.config;
+package me.walcriz.blockbreakspeed;
 
-import me.walcriz.blockbreakspeed.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Config {
+
+    /**
+     * Initialize config with default values. (Used when mocking and testing)
+     */
+    public Config() {}
+
+    /**
+     * Initialize config to load values from config
+     * @param main Main plugin instance
+     */
     public Config(Main main) {
         FileConfiguration config = main.getConfig();
         this.disableAnimations = config.getBoolean("animations.disable");

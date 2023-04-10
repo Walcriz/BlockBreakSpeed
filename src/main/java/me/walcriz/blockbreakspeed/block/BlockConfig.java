@@ -1,29 +1,38 @@
-package me.walcriz.blockbreakspeed.config;
+package me.walcriz.blockbreakspeed.block;
 
 import me.walcriz.blockbreakspeed.EffectValues;
+import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
 import me.walcriz.blockbreakspeed.exceptions.TargetNegativeException;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class BlockConfig {
-    private double hardnessTarget;
-    private boolean cancelBreakEvent = false;
+    public boolean cancelBreakEvent = false;
+
     private Material material;
+    private Hardness hardness;
+    private BlockInfo blockInfo;
+    public BlockInfo getBlockInfo() { return blockInfo; }
 
-    public BlockConfig(int hardnessTarget, Material material) throws TargetNegativeException {
-        if (hardnessTarget < 0 )
-            throw new TargetNegativeException("Target of " + material.name() + " hardness could not be calculated. Negative numbers are not supported! Was: hardnessTarget=" + hardnessTarget);
-
+    public BlockConfig(Hardness hardness, Material material, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
         this.material = material;
-        if (hardnessTarget == 0) {
-            cancelBreakEvent = true;
-            this.hardnessTarget = 0;
-            return;
-        }
+        this.hardness = hardness;
 
-        this.hardnessTarget = hardnessTarget / 100d;
+        if (hardness.base() == 0)
+            cancelBreakEvent = true;
+    }
+
+    private void createBlockInfo(String[] modifierStrings, String[] triggerStrings) {
+        blockInfo = new BlockInfo(new BreakModifierMap(), new TriggerMap());
+        blockInfo.populateInfo(modifierStrings, triggerStrings);
     }
 
     public static final double hasteIncrease = 0.2d; // 0.2 * x
@@ -31,12 +40,25 @@ public class BlockConfig {
     public static final int hasteMaxLevel = 255;
     public static final int fatigueMaxLevel = 4;
 
-    private EffectValues effectValues;
-    public EffectValues getEffectValues() throws TargetCalculationException {
-        if (effectValues != null) // If we already know the solution stop
-            return effectValues;
+    private final Map<Material, EffectValues> effectValuesCache = new HashMap<>();
+
+    /**
+     * Get {@link EffectValues} to apply to {@link Player}
+     * @param modifierMap The modifier map for this specific block
+     * @param player The player trying to break a block
+     * @param heldItem The current held item for the player
+     * @param block The block being mined
+     * @return The calculated or cached {@link EffectValues} to apply
+     * @throws TargetCalculationException Thrown if the target could not be reached
+     */
+    public EffectValues getEffectValues(BreakModifierMap modifierMap, Player player, ItemStack heldItem, Block block) throws TargetCalculationException {
+        if (effectValuesCache.containsKey(heldItem.getType())) // If we already know the solution stop
+            return effectValuesCache.get(heldItem.getType());
+
         if (cancelBreakEvent)
             return new EffectValues(0, 0);
+
+        double hardnessTarget = hardness.calculateHardnessProcent(modifierMap, player, heldItem, block);
 
         // hardnessTarget = 0.2x * 0.3^y
         // y = log(ht/0.2x) / log(0.3)
@@ -59,7 +81,7 @@ public class BlockConfig {
                 xValue = x;
                 yValue = (int) Math.floor(y);
                 break; // We know two very good values. Stop iterating
-            } else if (yValue < 0) {
+            } else if (yValue < 0) { // If we have no value use that
                 xValue = x;
                 yValue = (int) Math.round(y);
                 yValueFull = y;
@@ -73,7 +95,8 @@ public class BlockConfig {
         if (yValue < 0)
             throw new TargetCalculationException("Failed to find a non negative y value for block: " + material.name() + "! Was: hardnessTarget=" + hardnessTarget + " | x=" + xValue + " | y=" + yValue);
 
-        effectValues = new EffectValues(xValue, yValue);
+        EffectValues effectValues = new EffectValues(xValue, yValue);
+        effectValuesCache.put(heldItem.getType(), effectValues);
         return effectValues;
     }
 }

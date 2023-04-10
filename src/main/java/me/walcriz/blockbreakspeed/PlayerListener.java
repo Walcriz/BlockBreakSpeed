@@ -2,14 +2,20 @@ package me.walcriz.blockbreakspeed;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import me.walcriz.blockbreakspeed.config.BlockConfig;
+import me.walcriz.blockbreakspeed.block.BlockConfig;
+import me.walcriz.blockbreakspeed.block.BlockManager;
+import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -29,15 +35,12 @@ public class PlayerListener implements Listener {
         if (event.getClickedBlock() == null)
             return;
 
-        if (!Main.blockConfigs.containsKey(event.getClickedBlock().getType()))
+        BlockManager manager = BlockManager.getInstance();
+        if (!manager.contains(event.getClickedBlock().getType()))
             return;
 
         if (!playersMining.containsKey(event.getPlayer())) {
-            MiningStatus status = new MiningStatus(event.getClickedBlock(), true);
-            playersMining.put(event.getPlayer(), status);
-            applyEffects(event.getPlayer(), status);
-            tryStartTask();
-            playAnimation(event.getPlayer());
+            startMining(event.getPlayer(), event.getClickedBlock());
             return;
         }
 
@@ -51,14 +54,25 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onBreakBlock(BlockBreakEvent event) {
+        if (!playersMining.containsKey(event.getPlayer()))
+            return;
+
+        MiningStatus status = playersMining.get(event.getPlayer());
+        if (!status.block.equals(event.getBlock()))
+            return;
+
+        breakBlock(event.getPlayer(), event.getBlock());
+    }
+
     private void tryStartTask() {
         if (checkTask == -1) {
             int delay = Main.config.miningCheckTicks;
             checkTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
                 playersMining.forEach((p, status) -> { // p: player
                     if (!status.wasMining) {
-                        playersMining.remove(p);
-                        removeEffects(p);
+                        abortMining(p, status.block);
                         return;
                     }
 
@@ -67,6 +81,37 @@ public class PlayerListener implements Listener {
                 });
             }, delay, delay);
         }
+    }
+
+    public void startMining(Player player, Block block) {
+        MiningStatus status = new MiningStatus(block, true);
+        playersMining.put(player, status);
+        applyEffects(player, status);
+        tryStartTask();
+        playAnimation(player);
+
+        executeTriggers(TriggerType.Start, player, block);
+    }
+
+    public void abortMining(Player player, Block block) {
+        stopMining(player, block);
+        executeTriggers(TriggerType.Abort, player, block);
+    }
+
+    public void breakBlock(Player player, Block block) {
+        stopMining(player, block);
+        executeTriggers(TriggerType.Break, player, block);
+    }
+
+    public void stopMining(Player player, Block block) {
+        playersMining.remove(player);
+        removeEffects(player);
+
+        executeTriggers(TriggerType.Stop, player, block);
+    }
+
+    private void executeTriggers(TriggerType type, Player player, Block block) {
+        BlockManager.getInstance().executeTriggers(player, block, type);
     }
 
     public void applyEffects(Player player, MiningStatus status) {
@@ -115,6 +160,7 @@ public class PlayerListener implements Listener {
     }
 
     public static class MiningStatus {
+        public Player player;
         public Block block;
         public boolean wasMining; // Just ignore please
         public int ticksSinceLastAnimation = 0;
@@ -124,11 +170,19 @@ public class PlayerListener implements Listener {
         public MiningStatus(Block block, boolean wasMining) {
             this.block = block;
             this.wasMining = wasMining;
-            hardness = Main.blockConfigs.get(block.getType());
+
+            BlockManager manager = BlockManager.getInstance();
+            hardness = manager.getBlockConfig(block.getType());
         }
 
         public EffectValues getEffectValues() {
-            return hardness.getEffectValues();
+            BreakModifierMap modifierMap = BlockManager.getInstance().getModifierMap(block.getType());
+            return hardness.getEffectValues(modifierMap, player, getHeldItem(), block);
+        }
+
+        private ItemStack getHeldItem() {
+            PlayerInventory inventory = player.getInventory();
+            return inventory.getItem(inventory.getHeldItemSlot());
         }
     }
 }
