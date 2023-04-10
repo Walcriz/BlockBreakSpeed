@@ -28,6 +28,8 @@ public class BlockConfig {
 
         if (hardness.base() == 0)
             cancelBreakEvent = true;
+
+        createBlockInfo(modifierStrings, triggerStrings);
     }
 
     private void createBlockInfo(String[] modifierStrings, String[] triggerStrings) {
