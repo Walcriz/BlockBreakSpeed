@@ -24,7 +24,7 @@ public record Hardness(int base, int min, int max) {
         damage *= block.getBreakSpeed(player);
 
         damage *= block.getDrops(heldItem).size() > 0 ? 100 : 30; // Do I really have to make my own list of every block? That'd be a pain
-        // Maybe not this seems to be the good "hacky" way to do it
+        // ^ Maybe not, this seems to be the good "hacky" way to do it
 
         double speedMultiplier = damage * block.getType().getHardness();
 

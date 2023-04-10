@@ -51,15 +51,15 @@ public enum BreakStateType implements IType<IBreakModifier> {
      * @return String in the compiled format
      */
     public static @Nullable Pair<BreakStateType, IBreakModifier> compileString(String string) {
-        String[] split = string.split(Pattern.quote("{"));
+        String[] split = string.split(Pattern.quote("{"), 2); // Split at first '{' ex: break{command=asd} -> 1. break   2. command=asd}
         String typestring = split[0];
+        String dataString = split[1].substring(0, split[1].length() - 1); // Remove the: command=asd}<- part so it becomes command=asd
 
         for (BreakStateType type : BreakStateType.values()) {
             if (!type.configName.equals(typestring))
                 continue;
 
-            String datastring = split[1].replaceAll("}", "");
-            String[] settings = datastring.split(";");
+            String[] settings = dataString.split(";");
             Map<String, String> settingsMap = new HashMap<>();
             Arrays.stream(settings).forEach((setting) -> {
                 String[] parts = setting.split("=");
