@@ -14,7 +14,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.EnumMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Main extends JavaPlugin {
 
@@ -41,13 +42,20 @@ public final class Main extends JavaPlugin {
         // Plugin startup logic
         instance = this;
 
-        this.saveDefaultConfig();
-        config = new Config(this);
+        if (!isMock) {
+            // Load config
+            this.saveDefaultConfig();
+            config = new Config(this);
 
-        // Setup directories
-        blockFolder = new File(getDataFolder(), "blocks");
-        if (!blockFolder.exists())
-            this.saveResource("blocks", false);
+            // Setup directories
+            blockFolder = new File(getDataFolder(), "blocks");
+            if (!blockFolder.exists())
+                this.saveResource("blocks/example.yml", false);
+
+            // Load block configs
+            loadBlockConfigs();
+        }
+
 
         // Register events
         playerListener = new PlayerListener();
@@ -93,7 +101,7 @@ public final class Main extends JavaPlugin {
                     continue;
                 }
 
-                manager.getBlockConfigMap().put(material, new BlockConfig(hardness, material, modifierStrings, triggerStrings));
+                manager.addConfig(material, new BlockConfig(hardness, material, modifierStrings, triggerStrings));
             } catch (IOException e) {
                 logger.severe("IOException was created whilst loading config from file: " + blockConfig.getAbsolutePath());
                 e.printStackTrace();
@@ -104,12 +112,44 @@ public final class Main extends JavaPlugin {
         }
     }
 
+    public List<BlockConfig> mockBlockConfigs(String[] modifiers, String[] triggers, Hardness hardness, Material... materials) {
+//        String[] modifiers = new String[] {
+//                "helditem{type=diamond_pickaxe;value=5}",
+//                "sneaking{value=2}",
+//                "helditem{type=stone;value=3}",
+//                "helditem{type=netherite_hoe;value=1}",
+//                "helditem{type=netherite_pickaxe;value=-2}",
+//        };
+
+        BlockManager manager = BlockManager.getInstance();
+
+        List<BlockConfig> configs = new ArrayList<>();
+        for (Material material : materials) {
+            BlockConfig blockConfig =  new BlockConfig(hardness, material, modifiers, triggers);
+            configs.add(blockConfig);
+            manager.addConfig(material, blockConfig);
+        }
+        return configs;
+    }
+
+    public void mockConfig(Config mockConfig) {
+        config = mockConfig;
+    }
+
     public void reloadBlockConfigs() {
         BlockManager manager = BlockManager.getInstance();
         manager.clearBlockConfigs();
-        loadBlockConfigs();
+        if (!isMock)
+            loadBlockConfigs();
 
         playerListener.cancelTask();
         playerListener.removeAllEffects();
+    }
+
+    public Main() {}
+
+    private boolean isMock = false;
+    public Main(boolean isMock) {
+        this.isMock = isMock;
     }
 }

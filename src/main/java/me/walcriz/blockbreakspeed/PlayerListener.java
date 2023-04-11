@@ -7,6 +7,7 @@ import me.walcriz.blockbreakspeed.block.BlockManager;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,6 +34,9 @@ public class PlayerListener implements Listener {
             return;
 
         if (event.getClickedBlock() == null)
+            return;
+
+        if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))
             return;
 
         BlockManager manager = BlockManager.getInstance();
@@ -70,22 +74,25 @@ public class PlayerListener implements Listener {
         if (checkTask == -1) {
             int delay = Main.config.miningCheckTicks;
             checkTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+                List<Player> playersToRemove = new ArrayList<>();
                 playersMining.forEach((p, status) -> { // p: player
                     if (!status.wasMining) {
                         abortMining(p, status.block);
+                        playersToRemove.add(p);
                         return;
                     }
 
                     status.wasMining = false;
                     applyEffects(p, status);
                 });
+
+                playersToRemove.forEach((p) -> playersMining.remove(p));
             }, delay, delay);
         }
     }
 
     public void startMining(Player player, Block block) {
-        MiningStatus status = new MiningStatus(block, true);
-        playersMining.put(player, status);
+        MiningStatus status = new MiningStatus(player, block, true);
         applyEffects(player, status);
         tryStartTask();
         playAnimation(player);
@@ -104,7 +111,6 @@ public class PlayerListener implements Listener {
     }
 
     public void stopMining(Player player, Block block) {
-        playersMining.remove(player);
         removeEffects(player);
 
         executeTriggers(TriggerType.Stop, player, block);
@@ -117,8 +123,8 @@ public class PlayerListener implements Listener {
     public void applyEffects(Player player, MiningStatus status) {
         EffectValues values = status.getEffectValues();
 
-        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, 999, values.hasteValue, false, false, false);
-        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, 999, values.fatigueValue, false, false, false);
+        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, 40, values.hasteValue, false, false, false);
+        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, 40, values.fatigueValue, false, false, false);
 
         player.addPotionEffect(hasteEffect);
         player.addPotionEffect(fatigueEffect);
@@ -167,7 +173,8 @@ public class PlayerListener implements Listener {
 
         private BlockConfig hardness;
 
-        public MiningStatus(Block block, boolean wasMining) {
+        public MiningStatus(Player player, Block block, boolean wasMining) {
+            this.player = player;
             this.block = block;
             this.wasMining = wasMining;
 

@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class BlockConfig {
     public boolean cancelBreakEvent = false;
 
     private Material material;
+    public Material getMaterial() { return material; }
     private Hardness hardness;
     private BlockInfo blockInfo;
     public BlockInfo getBlockInfo() { return blockInfo; }
@@ -39,7 +41,7 @@ public class BlockConfig {
 
     public static final double hasteIncrease = 0.2d; // 0.2 * x
     public static final double fatigueMultiplier = 0.3d; // 0.3^x
-    public static final int hasteMaxLevel = 255;
+    public static final int hasteMaxLevel = 128;
     public static final int fatigueMaxLevel = 4;
 
     private final Map<Material, EffectValues> effectValuesCache = new HashMap<>();
@@ -53,12 +55,16 @@ public class BlockConfig {
      * @return The calculated or cached {@link EffectValues} to apply
      * @throws TargetCalculationException Thrown if the target could not be reached
      */
-    public EffectValues getEffectValues(BreakModifierMap modifierMap, Player player, ItemStack heldItem, Block block) throws TargetCalculationException {
-        if (effectValuesCache.containsKey(heldItem.getType())) // If we already know the solution stop
+    public EffectValues getEffectValues(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) throws TargetCalculationException {
+        if (heldItem == null && effectValuesCache.containsKey(Material.AIR)) // If we already know the solution stop
+            return effectValuesCache.get(Material.AIR);
+        else if (heldItem != null && effectValuesCache.containsKey(heldItem.getType()))
             return effectValuesCache.get(heldItem.getType());
 
         if (cancelBreakEvent)
             return new EffectValues(0, 0);
+
+        Material itemMaterial = heldItem == null ? Material.AIR : heldItem.getType();
 
         double hardnessTarget = hardness.calculateHardnessProcent(modifierMap, player, heldItem, block);
 
@@ -69,7 +75,6 @@ public class BlockConfig {
 
         int xValue = -1;
         int yValue = -1;
-        double yValueFull = -1;
         for (int x = 0; x < hasteMaxLevel; x++) {
             double y = solveForY.apply((double) x);
 
@@ -85,12 +90,7 @@ public class BlockConfig {
                 break; // We know two very good values. Stop iterating
             } else if (yValue < 0) { // If we have no value use that
                 xValue = x;
-                yValue = (int) Math.round(y);
-                yValueFull = y;
-            } else if (Math.abs(y - Math.round(y)) < Math.abs(yValueFull - Math.round(yValueFull))) { // If we found a more exact number. Use that
-                xValue = x;
-                yValue = (int) Math.round(y);
-                yValueFull = y;
+                yValue = (int) Math.floor(y);
             }
         }
 
@@ -98,7 +98,8 @@ public class BlockConfig {
             throw new TargetCalculationException("Failed to find a non negative y value for block: " + material.name() + "! Was: hardnessTarget=" + hardnessTarget + " | x=" + xValue + " | y=" + yValue);
 
         EffectValues effectValues = new EffectValues(xValue, yValue);
-        effectValuesCache.put(heldItem.getType(), effectValues);
+        effectValuesCache.put(itemMaterial, effectValues);
+        System.out.println(effectValues);
         return effectValues;
     }
 }

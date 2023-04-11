@@ -3,8 +3,10 @@ package me.walcriz.blockbreakspeed.block;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public record Hardness(int base, int min, int max) {
 
@@ -16,20 +18,25 @@ public record Hardness(int base, int min, int max) {
      * @return Our target hardness in procent
      * @see <a href="https://minecraft.fandom.com/wiki/Breaking#Calculation">How minecraft calculates hardness</a>
      */
-    public double calculateHardnessProcent(BreakModifierMap modifierMap, Player player, ItemStack heldItem, Block block) {
+    public double calculateHardnessProcent(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
+
         int ticks = calculateHardnessTicks(modifierMap, player);
 
         // Get block max damage
         double damage = 1d / ticks;
         damage *= block.getBreakSpeed(player);
 
-        damage *= block.getDrops(heldItem).size() > 0 ? 100 : 30; // Do I really have to make my own list of every block? That'd be a pain
-        // ^ Maybe not, this seems to be the good "hacky" way to do it
+        BlockData blockData = block.getBlockData();
+        boolean isPreferredTool = heldItem != null && blockData.isPreferredTool(heldItem);
 
-        double speedMultiplier = damage * block.getType().getHardness();
+        damage *= blockData.requiresCorrectToolForDrops() && isPreferredTool ? 30 : 100; // Do I really have to make my own list of every block? That'd be a pain
+        // ^ Maybe not, this seems to be the good "hacky" way to do it
+        // Nah found a better way.
+
+        double speedMultiplier = damage / block.getBreakSpeed(player);
 
         // This is the one we want
-        return speedMultiplier / (block.isPreferredTool(heldItem) ? getToolMultiplier(heldItem.getType()) : 1);
+        return speedMultiplier / (isPreferredTool ? getToolMultiplier(heldItem.getType()) : 1);
     }
 
     private int calculateHardnessTicks(BreakModifierMap modifierMap, Player player) {

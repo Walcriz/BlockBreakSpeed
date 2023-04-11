@@ -44,9 +44,14 @@ public final class BlockManager {
         return blockConfigMap.containsKey(material);
     }
 
+    public void addConfig(Material blockType, BlockConfig config) {
+        getBlockConfigMap().put(blockType, config);
+    }
+
     public void executeTriggers(Player player, Block block, TriggerType type) {
         TriggerMap triggers = getTriggerMap(block.getType());
-        triggers.get(type).executeTriggers(player, block);
+        if (triggers.containsKey(type))
+            triggers.get(type).executeTriggers(player, block);
     }
 
     public void clearBlockConfigs() {
