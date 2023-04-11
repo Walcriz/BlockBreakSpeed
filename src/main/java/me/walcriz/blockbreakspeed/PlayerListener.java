@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -29,43 +30,44 @@ public class PlayerListener implements Listener {
     private int checkTask = -1;
 
     @EventHandler
-    public void onLeftClickOnBlock(PlayerInteractEvent event) {
-        if (event.getAction() != Action.LEFT_CLICK_BLOCK)
-            return;
+    public void onBlockDamage(BlockDamageEvent event) {
+        onMine(event.getPlayer(), event.getBlock());
+    }
 
-        if (event.getClickedBlock() == null)
-            return;
+    private void onMine(Player player, Block block) {
 
-        if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))
+        if (!player.getGameMode().equals(GameMode.SURVIVAL))
             return;
 
         BlockManager manager = BlockManager.getInstance();
-        if (!manager.contains(event.getClickedBlock().getType()))
+        if (!manager.contains(block.getType()))
             return;
 
-        if (!playersMining.containsKey(event.getPlayer())) {
-            startMining(event.getPlayer(), event.getClickedBlock());
+        if (!playersMining.containsKey(player)) {
+            startMining(player, block);
             return;
         }
 
-        MiningStatus status = playersMining.get(event.getPlayer());
-        if (status.block.equals(event.getClickedBlock())) {
+        MiningStatus status = playersMining.get(player);
+        if (status.block.equals(block)) {
             status.wasMining = true;
             status.ticksSinceLastAnimation += 1;
             if (status.ticksSinceLastAnimation >= Main.config.animationDelay) {
-                playAnimation(event.getPlayer());
+                playAnimation(player);
             }
+            applyEffects(player, status);
         }
     }
 
     @EventHandler
     public void onBreakBlock(BlockBreakEvent event) {
-        if (!playersMining.containsKey(event.getPlayer()))
+
+        if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))
             return;
 
-        MiningStatus status = playersMining.get(event.getPlayer());
-        if (!status.block.equals(event.getBlock()))
-            return;
+//        MiningStatus status = playersMining.get(event.getPlayer());
+//        if (!status.block.equals(event.getBlock()))
+//            return;
 
         breakBlock(event.getPlayer(), event.getBlock());
     }
@@ -78,7 +80,7 @@ public class PlayerListener implements Listener {
                 playersMining.forEach((p, status) -> { // p: player
                     if (!status.wasMining) {
                         abortMining(p, status.block);
-                        playersToRemove.add(p);
+                        playersToRemove.add(p); // FIXME: It ***** up somewhere around here
                         return;
                     }
 
@@ -123,8 +125,8 @@ public class PlayerListener implements Listener {
     public void applyEffects(Player player, MiningStatus status) {
         EffectValues values = status.getEffectValues();
 
-        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, 40, values.hasteValue, false, false, false);
-        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, 40, values.fatigueValue, false, false, false);
+        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, 120, values.hasteValue, false, false, true);
+        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, 120, values.fatigueValue, false, false, true);
 
         player.addPotionEffect(hasteEffect);
         player.addPotionEffect(fatigueEffect);

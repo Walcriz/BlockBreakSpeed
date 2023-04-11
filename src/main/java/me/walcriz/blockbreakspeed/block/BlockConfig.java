@@ -42,7 +42,7 @@ public class BlockConfig {
     public static final double hasteIncrease = 0.2d; // 0.2 * x
     public static final double fatigueMultiplier = 0.3d; // 0.3^x
     public static final int hasteMaxLevel = 128;
-    public static final int fatigueMaxLevel = 4;
+    public static final int fatigueMaxLevel = 3;
 
     private final Map<Material, EffectValues> effectValuesCache = new HashMap<>();
 
@@ -82,15 +82,15 @@ public class BlockConfig {
                 continue;
 
             if (y > fatigueMaxLevel) // y cant be higher than 4 (A minecraft restriction)
-                break; // This means that we already failed to find a whole number value (We will use the rounded value)
+                break; // This means that we already failed/found to find a whole number value (We will use the rounded value)
 
             if (y % 1 == 0) { // Prefer whole numbers
                 xValue = x;
-                yValue = (int) Math.floor(y);
+                yValue = (int) Math.round(y);
                 break; // We know two very good values. Stop iterating
             } else if (yValue < 0) { // If we have no value use that
                 xValue = x;
-                yValue = (int) Math.floor(y);
+                yValue = (int) Math.round(y);
             }
         }
 

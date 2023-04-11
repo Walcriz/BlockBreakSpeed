@@ -34,7 +34,8 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        protocolManager = ProtocolLibrary.getProtocolManager();
+        if (this.getServer().getPluginManager().isPluginEnabled("ProtocolLib"))
+            protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
     @Override
