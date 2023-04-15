@@ -118,7 +118,7 @@ public class PlayerListener implements Listener {
         // Disable drops if wanted
         BlockConfig config = manager.getBlockConfig(blockType);
         event.setDropItems(!config.doSuppressDrops());
-        stopMining(event.getPlayer(), event.getBlock());
+        breakBlock(event.getPlayer(), event.getBlock());
     }
 
     public void startMining(Player player, Block block) {
@@ -151,8 +151,8 @@ public class PlayerListener implements Listener {
     public void applyEffects(Player player, MiningStatus status) {
         EffectValues values = status.getEffectValues();
 
-        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, -1, values.hasteValue, false, false, true);
-        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, -1, values.fatigueValue, false, false, true);
+        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, -1, values.hasteValue, false, false, false);
+        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, -1, values.fatigueValue, false, false, false);
 
         player.addPotionEffect(hasteEffect);
         player.addPotionEffect(fatigueEffect);
