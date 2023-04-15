@@ -32,7 +32,7 @@ public class BlockBreakSpeedTests {
     private ServerMock server;
     private Main plugin;
 
-    // NOTE: These unit tests wont start. Paper chanced their plugin loading mechanism and MockBukkit is broken because of it.
+    // NOTE: These unit tests wont start. Paper changed their plugin loading mechanism and MockBukkit is broken because of it.
     @Before
     public void before() {
         server = MockBukkit.mock();

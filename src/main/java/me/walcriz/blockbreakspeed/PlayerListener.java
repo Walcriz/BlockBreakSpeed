@@ -90,7 +90,7 @@ public class PlayerListener implements Listener {
         event.setInstaBreak(false); // Disable insta-break for blocks like mushroom blocks
 
         BlockConfig config = manager.getBlockConfig(block.getType());
-        BreakModifierMap map = manager.getModifierMap(block.getType());
+        BreakModifierMap map = config.getBlockInfo().modifierMap();
 
         // See if you should insta-break the block
         if (config.getHardness().calculateHardnessTicks(map, player) > 0)
@@ -199,7 +199,7 @@ public class PlayerListener implements Listener {
         public long lastMinedTime; // Just ignore please
         public int ticksSinceLastAnimation = 0;
 
-        private BlockConfig hardness;
+        private BlockConfig config;
 
         public MiningStatus(Player player, Block block, long lastMinedTime) {
             this.player = player;
@@ -207,12 +207,12 @@ public class PlayerListener implements Listener {
             this.lastMinedTime = lastMinedTime;
 
             BlockManager manager = BlockManager.getInstance();
-            hardness = manager.getBlockConfig(block.getType());
+            config = manager.getBlockConfig(block.getType());
         }
 
         public EffectValues getEffectValues() {
             BreakModifierMap modifierMap = BlockManager.getInstance().getModifierMap(block.getType());
-            return hardness.getEffectValues(modifierMap, player, getHeldItem(), block);
+            return config.getEffectValues(modifierMap, player, getHeldItem(), block);
         }
 
         private ItemStack getHeldItem() {
