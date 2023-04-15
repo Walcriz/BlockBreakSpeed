@@ -1,6 +1,8 @@
 # BlockBreakSpeed
 A **semi** drop-in replacement for **Breaker2** that uses potion effects to minimize desync/packets sent between server and client.
 
+Tested versions: 1.19.4
+
 ## Benefits
 - It sends way less packets to the client (*the reason this was made*)
 - Reduces chances of desync between server and client (*Needs more testing*)
