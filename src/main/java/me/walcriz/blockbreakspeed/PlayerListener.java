@@ -89,10 +89,11 @@ public class PlayerListener implements Listener {
 
         event.setInstaBreak(false); // Disable insta-break for blocks like mushroom blocks
 
+        BlockConfig config = manager.getBlockConfig(block.getType());
         BreakModifierMap map = manager.getModifierMap(block.getType());
 
         // See if you should insta-break the block
-        if (manager.getBlockConfig(block.getType()).getHardness().calculateHardnessTicks(map, player) > 0)
+        if (config.getHardness().calculateHardnessTicks(map, player) > 0)
             return;
 
         // Then set insta-break to true
@@ -150,8 +151,8 @@ public class PlayerListener implements Listener {
     public void applyEffects(Player player, MiningStatus status) {
         EffectValues values = status.getEffectValues();
 
-        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, 120, values.hasteValue, false, false, true);
-        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, 120, values.fatigueValue, false, false, true);
+        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, -1, values.hasteValue, false, false, true);
+        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, -1, values.fatigueValue, false, false, true);
 
         player.addPotionEffect(hasteEffect);
         player.addPotionEffect(fatigueEffect);
