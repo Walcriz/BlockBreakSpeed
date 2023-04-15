@@ -42,7 +42,7 @@ public class BlockBreakSpeedTests {
 
     @Test
     public void canLoad() {
-        plugin.mockConfig(new Config(1));
+        plugin.mockConfig(new Config());
         List<BlockConfig> blockConfigs =  plugin.mockBlockConfigs(
                 new String[]{ "helditem{type=diamond_pickaxe;value=1}" },
                 new String[]{ "start{command=say something}" },
@@ -73,7 +73,7 @@ public class BlockBreakSpeedTests {
         ItemStack itemStack = server.getItemFactory().createItemStack("minecraft:diamond_pickaxe");
         inventory.setItemInMainHand(itemStack);
 
-        plugin.mockConfig(new Config(2));
+        plugin.mockConfig(new Config());
 
         List<BlockConfig> blockConfigs =  plugin.mockBlockConfigs(
                 new String[]{ "helditem{type=diamond_pickaxe;value=12}" },

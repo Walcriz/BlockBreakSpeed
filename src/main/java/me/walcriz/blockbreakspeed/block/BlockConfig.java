@@ -21,12 +21,16 @@ public class BlockConfig {
     private Material material;
     public Material getMaterial() { return material; }
     private Hardness hardness;
+    public Hardness getHardness() { return hardness; }
     private BlockInfo blockInfo;
     public BlockInfo getBlockInfo() { return blockInfo; }
+    private boolean suppressDrops = false;
+    public boolean doSuppressDrops() { return suppressDrops; }
 
-    public BlockConfig(Hardness hardness, Material material, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
+    public BlockConfig(Hardness hardness, Material material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
         this.material = material;
         this.hardness = hardness;
+        this.suppressDrops = suppressDrops;
 
         if (hardness.base() == 0)
             cancelBreakEvent = true;

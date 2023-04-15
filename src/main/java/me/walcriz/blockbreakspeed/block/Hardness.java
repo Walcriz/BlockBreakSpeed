@@ -39,7 +39,7 @@ public record Hardness(int base, int min, int max) {
         return speedMultiplier / (isPreferredTool ? getToolMultiplier(heldItem.getType()) : 1);
     }
 
-    private int calculateHardnessTicks(BreakModifierMap modifierMap, Player player) {
+    public int calculateHardnessTicks(BreakModifierMap modifierMap, Player player) {
         int tickModifier = modifierMap.getCurrentModifiers(player);
 
         if (tickModifier > max())

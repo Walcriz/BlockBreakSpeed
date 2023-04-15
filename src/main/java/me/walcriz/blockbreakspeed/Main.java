@@ -34,8 +34,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        if (this.getServer().getPluginManager().isPluginEnabled("ProtocolLib"))
-            protocolManager = ProtocolLibrary.getProtocolManager();
+        protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
     @Override
@@ -70,6 +69,7 @@ public final class Main extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         config = null;
+        playerListener.cancelTask();
     }
 
     private void loadBlockConfigs() {
@@ -91,6 +91,10 @@ public final class Main extends JavaPlugin {
                 String[] modifierStrings = configuration.getStringList("states").toArray(new String[0]);
                 String[] triggerStrings = configuration.getStringList("triggers").toArray(new String[0]);
 
+                boolean suppressDrops = false;
+                if (configuration.contains("disable-drops"))
+                    suppressDrops = configuration.getBoolean("disable-drops");
+
                 if (materialName == null) {
                     logger.warning("Incomplete configuration at file: " + blockConfig.getAbsolutePath());
                     continue;
@@ -102,7 +106,7 @@ public final class Main extends JavaPlugin {
                     continue;
                 }
 
-                manager.addConfig(material, new BlockConfig(hardness, material, modifierStrings, triggerStrings));
+                manager.addConfig(material, new BlockConfig(hardness, material, suppressDrops, modifierStrings, triggerStrings));
             } catch (IOException e) {
                 logger.severe("IOException was created whilst loading config from file: " + blockConfig.getAbsolutePath());
                 e.printStackTrace();
@@ -126,7 +130,7 @@ public final class Main extends JavaPlugin {
 
         List<BlockConfig> configs = new ArrayList<>();
         for (Material material : materials) {
-            BlockConfig blockConfig =  new BlockConfig(hardness, material, modifiers, triggers);
+            BlockConfig blockConfig =  new BlockConfig(hardness, material, false, modifiers, triggers);
             configs.add(blockConfig);
             manager.addConfig(material, blockConfig);
         }
@@ -142,6 +146,8 @@ public final class Main extends JavaPlugin {
         manager.clearBlockConfigs();
         if (!isMock)
             loadBlockConfigs();
+
+        config.reloadConfig(this);
 
         playerListener.cancelTask();
         playerListener.removeAllEffects();

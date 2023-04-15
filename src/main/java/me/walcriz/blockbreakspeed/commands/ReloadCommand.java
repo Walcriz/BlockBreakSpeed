@@ -6,7 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-public class ReloadCommand implements CommandExecutor {
+public class ReloadCommand implements ICommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -16,6 +16,7 @@ public class ReloadCommand implements CommandExecutor {
         }
 
         Main.getInstance().reloadBlockConfigs();
+        this.messageSender(sender, "Successfully reloaded configs!");
 
         return true;
     }

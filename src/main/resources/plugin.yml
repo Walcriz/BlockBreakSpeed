@@ -5,7 +5,7 @@ api-version: 1.19
 authors: [Walcriz]
 website: walcriz.net
 
-softdepend: [ ProtocolLib ]
+depend: [ ProtocolLib ]
 
 commands:
   bbsreload:
