@@ -1,6 +1,7 @@
 package me.walcriz.blockbreakspeed.block;
 
 import me.walcriz.blockbreakspeed.EffectValues;
+import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
@@ -103,7 +104,10 @@ public class BlockConfig {
 
         EffectValues effectValues = new EffectValues(xValue, yValue);
         effectValuesCache.put(itemMaterial, effectValues);
-        System.out.println(effectValues);
+
+        if (Main.doDebugLog())
+            Main.logger.info(effectValues.toString());
+
         return effectValues;
     }
 }

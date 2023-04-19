@@ -20,8 +20,10 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -55,6 +57,9 @@ public class PlayerListener implements Listener {
     }
 
     private void onDigging(PacketEvent event) {
+        if (Main.doDebugLog())
+            event.getPlayer().sendMessage("Digging");
+
         PacketContainer packet = event.getPacket();
 
         Player player = event.getPlayer();
@@ -77,6 +82,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onBlockDamage(BlockDamageEvent event) {
+        if (Main.doDebugLog())
+            event.getPlayer().sendMessage("Block Damage");
+
         Player player = event.getPlayer();
         Block block = event.getBlock();
 
@@ -102,6 +110,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onBreakBlock(BlockBreakEvent event) {
+        if (Main.doDebugLog())
+            event.getPlayer().sendMessage("Break Block");
 
         if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))
             return;
@@ -122,7 +132,7 @@ public class PlayerListener implements Listener {
     }
 
     public void startMining(Player player, Block block) {
-        MiningStatus status = new MiningStatus(player, block, System.currentTimeMillis());
+        MiningStatus status = new MiningStatus(player, block);
         playersMining.put(player, status);
         applyEffects(player, status);
 
@@ -181,7 +191,8 @@ public class PlayerListener implements Listener {
         try {
             Main.getProtocolManager().sendServerPacket(player, packetContainer);
         } catch (InvocationTargetException e) {
-            Main.getInstance().logger.warning("Could not send animation packet for player: " + player.getName());
+            logger.warning("Could not send animation packet for player: " + player.getName());
+            e.printStackTrace();
         }
     }
 
@@ -196,15 +207,13 @@ public class PlayerListener implements Listener {
     public static class MiningStatus {
         public Player player;
         public Block block;
-        public long lastMinedTime; // Just ignore please
         public int ticksSinceLastAnimation = 0;
 
         private BlockConfig config;
 
-        public MiningStatus(Player player, Block block, long lastMinedTime) {
+        public MiningStatus(Player player, Block block) {
             this.player = player;
             this.block = block;
-            this.lastMinedTime = lastMinedTime;
 
             BlockManager manager = BlockManager.getInstance();
             config = manager.getBlockConfig(block.getType());

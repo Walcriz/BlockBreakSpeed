@@ -1,4 +1,7 @@
 
+# Enable debug logging. (Be warned this will send a lot of messages in player & server logs/chats)
+debug-logging: false
+
 animations:
   # Disable packets that make the hand animate
   disable: false

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
 
@@ -30,7 +31,11 @@ public final class Main extends JavaPlugin {
 
     public static Config config;
 
+    public static Logger logger;
+
     public File blockFolder;
+
+    public static boolean doDebugLog() { return config.debugLogging; }
 
     @Override
     public void onLoad() {
@@ -41,16 +46,21 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         instance = this;
+        logger = this.getLogger();
 
         if (!isMock) {
+            logger.info("Loading configs...");
+
             // Load config
             this.saveDefaultConfig();
             config = new Config(this);
 
             // Setup directories
             blockFolder = new File(getDataFolder(), "blocks");
-            if (!blockFolder.exists())
+            if (!blockFolder.exists()) {
+                logger.info(blockFolder.getAbsolutePath() + " was not found. Creating it...");
                 this.saveResource("blocks/example.yml", false);
+            }
 
             // Load block configs
             loadBlockConfigs();
@@ -83,6 +93,9 @@ public final class Main extends JavaPlugin {
             if (blockConfig.getName().equals("example.yml"))
                 continue;
 
+            if (doDebugLog())
+                logger.info("Loading block config from file: '" + blockConfig.getName() + "'...");
+
             YamlConfiguration configuration = new YamlConfiguration();
             try {
                 configuration.load(blockConfig);
@@ -114,6 +127,9 @@ public final class Main extends JavaPlugin {
                 logger.severe("Invalid configuration at file: " + blockConfig.getAbsolutePath());
                 e.printStackTrace();
             }
+
+            if (doDebugLog())
+                logger.info("Successfully loaded block config for file: '" + blockConfig.getName() + "'");
         }
     }
 

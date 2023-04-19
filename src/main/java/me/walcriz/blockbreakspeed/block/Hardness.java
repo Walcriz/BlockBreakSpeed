@@ -1,5 +1,6 @@
 package me.walcriz.blockbreakspeed.block;
 
+import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -36,7 +37,11 @@ public record Hardness(int base, int min, int max) {
         double speedMultiplier = damage / block.getBreakSpeed(player);
 
         // This is the one we want
-        return speedMultiplier / (isPreferredTool ? getToolMultiplier(heldItem.getType()) : 1);
+        double hardnessProcent = speedMultiplier / (isPreferredTool ? getToolMultiplier(heldItem.getType()) : 1);
+        if (Main.doDebugLog())
+            Main.logger.info("Got 'hardnessProcent: " + hardnessProcent + "' for player: " + player.getName());
+
+        return hardnessProcent;
     }
 
     public int calculateHardnessTicks(BreakModifierMap modifierMap, Player player) {
