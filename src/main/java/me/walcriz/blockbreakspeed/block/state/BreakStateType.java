@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 public enum BreakStateType implements IType<IBreakModifier> {
     HeldItem(HeldItemBreakModifier.class, "helditem", (settings) -> {
-        Material type = settings.getMaterial("type", Material.STONE);
+        var type = settings.getMaterial("type", "STONE");
         int value = settings.getInteger("value", 1);
         return new Object[]{ value, type };
     }, new Class[]{ Integer.class, Material.class }),
