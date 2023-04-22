@@ -2,6 +2,8 @@ package me.walcriz.blockbreakspeed.block;
 
 import me.walcriz.blockbreakspeed.EffectValues;
 import me.walcriz.blockbreakspeed.Main;
+import me.walcriz.blockbreakspeed.block.material.IMaterial;
+import me.walcriz.blockbreakspeed.block.material.MaterialType;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
@@ -12,15 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 public class BlockConfig {
     public boolean cancelBreakEvent = false;
 
-    private Material material;
-    public Material getMaterial() { return material; }
+    private IMaterial<?> material;
+    public IMaterial<?> getMaterial() { return material; }
     private Hardness hardness;
     public Hardness getHardness() { return hardness; }
     private BlockInfo blockInfo;
@@ -28,7 +28,7 @@ public class BlockConfig {
     private boolean suppressDrops = false;
     public boolean doSuppressDrops() { return suppressDrops; }
 
-    public BlockConfig(Hardness hardness, Material material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
+    public BlockConfig(Hardness hardness, IMaterial<?> material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
         this.material = material;
         this.hardness = hardness;
         this.suppressDrops = suppressDrops;
@@ -49,7 +49,7 @@ public class BlockConfig {
     public static final int hasteMaxLevel = 128;
     public static final int fatigueMaxLevel = 3;
 
-    private final Map<Material, EffectValues> effectValuesCache = new HashMap<>();
+//    private final Map<IMaterial<?>, EffectValues> effectValuesCache = new HashMap<>();
 
     /**
      * Get {@link EffectValues} to apply to {@link Player}
@@ -61,15 +61,13 @@ public class BlockConfig {
      * @throws TargetCalculationException Thrown if the target could not be reached
      */
     public EffectValues getEffectValues(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) throws TargetCalculationException {
-        if (heldItem == null && effectValuesCache.containsKey(Material.AIR)) // If we already know the solution stop
-            return effectValuesCache.get(Material.AIR);
-        else if (heldItem != null && effectValuesCache.containsKey(heldItem.getType()))
-            return effectValuesCache.get(heldItem.getType());
+//        if (heldItem == null && effectValuesCache.containsKey(Material.AIR)) // If we already know the solution stop
+//            return effectValuesCache.get(block.getType());
+//        else if (heldItem != null && effectValuesCache.containsKey(heldItem.getType()))
+//            return effectValuesCache.get(heldItem.getType());
 
         if (cancelBreakEvent)
             return new EffectValues(0, 0);
-
-        Material itemMaterial = heldItem == null ? Material.AIR : heldItem.getType();
 
         double hardnessTarget = hardness.calculateHardnessProcent(modifierMap, player, heldItem, block);
 
@@ -100,10 +98,10 @@ public class BlockConfig {
         }
 
         if (yValue < 0)
-            throw new TargetCalculationException("Failed to find a non negative y value for block: " + material.name() + "! Was: hardnessTarget=" + hardnessTarget + " | x=" + xValue + " | y=" + yValue);
+            throw new TargetCalculationException("Failed to find a non negative y value for block: " + material.getName() + "! Was: hardnessTarget=" + hardnessTarget + " | x=" + xValue + " | y=" + yValue);
 
         EffectValues effectValues = new EffectValues(xValue, yValue);
-        effectValuesCache.put(itemMaterial, effectValues);
+//        effectValuesCache.put(itemMaterial, effectValues);
 
         if (Main.doDebugLog())
             Main.logger.info(effectValues.toString());

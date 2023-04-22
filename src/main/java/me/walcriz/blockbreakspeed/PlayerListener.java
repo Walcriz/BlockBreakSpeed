@@ -68,7 +68,7 @@ public class PlayerListener implements Listener {
         Block block = location.getBlock();
 
         BlockManager manager = BlockManager.getInstance();
-        if (!manager.contains(block.getType()))
+        if (!manager.contains(block))
             return;
 
         if (status == PlayerDigType.START_DESTROY_BLOCK) {
@@ -90,12 +90,12 @@ public class PlayerListener implements Listener {
             return;
 
         BlockManager manager = BlockManager.getInstance();
-        if (!manager.contains(block.getType()))
+        if (!manager.contains(block))
             return;
 
         event.setInstaBreak(false); // Disable insta-break for blocks like mushroom blocks
 
-        BlockConfig config = manager.getBlockConfig(block.getType());
+        BlockConfig config = manager.getBlockConfig(block);
         BreakModifierMap map = config.getBlockInfo().modifierMap();
 
         // See if you should insta-break the block
@@ -115,8 +115,8 @@ public class PlayerListener implements Listener {
             return;
 
         BlockManager manager = BlockManager.getInstance();
-        Material blockType = event.getBlock().getType();
-        if (!manager.contains(blockType))
+        Block block = event.getBlock();
+        if (!manager.contains(block))
             return;
 
 
@@ -124,7 +124,7 @@ public class PlayerListener implements Listener {
             return;
 
         // Disable drops if wanted
-        BlockConfig config = manager.getBlockConfig(blockType);
+        BlockConfig config = manager.getBlockConfig(block);
         event.setDropItems(!config.doSuppressDrops());
         breakBlock(event.getPlayer(), event.getBlock());
     }
@@ -218,7 +218,7 @@ public class PlayerListener implements Listener {
             fastDiggingEffect = player.getPotionEffect(PotionEffectType.FAST_DIGGING);
 
             BlockManager manager = BlockManager.getInstance();
-            config = manager.getBlockConfig(block.getType());
+            config = manager.getBlockConfig(block);
         }
 
         public void applyOldPotionEffects() {
@@ -234,7 +234,7 @@ public class PlayerListener implements Listener {
         }
 
         public EffectValues getEffectValues() {
-            BreakModifierMap modifierMap = BlockManager.getInstance().getModifierMap(block.getType());
+            BreakModifierMap modifierMap = BlockManager.getInstance().getModifierMap(block);
             return config.getEffectValues(modifierMap, player, getHeldItem(), block);
         }
 

@@ -4,6 +4,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import me.walcriz.blockbreakspeed.block.BlockManager;
 import me.walcriz.blockbreakspeed.block.Hardness;
+import me.walcriz.blockbreakspeed.block.material.IMaterial;
+import me.walcriz.blockbreakspeed.block.material.MaterialType;
 import me.walcriz.blockbreakspeed.commands.ReloadCommand;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
 import org.bukkit.Bukkit;
@@ -113,7 +115,7 @@ public final class Main extends JavaPlugin {
                     continue;
                 }
 
-                Material material = Material.getMaterial(materialName);
+                IMaterial<?> material = MaterialType.getMaterial(materialName);
                 if (material == null) {
                     logger.warning("No material of type: '" + materialName + "' exist");
                     continue;
@@ -131,26 +133,6 @@ public final class Main extends JavaPlugin {
             if (doDebugLog())
                 logger.info("Successfully loaded block config for file: '" + blockConfig.getName() + "'");
         }
-    }
-
-    public List<BlockConfig> mockBlockConfigs(String[] modifiers, String[] triggers, Hardness hardness, Material... materials) {
-//        String[] modifiers = new String[] {
-//                "helditem{type=diamond_pickaxe;value=5}",
-//                "sneaking{value=2}",
-//                "helditem{type=stone;value=3}",
-//                "helditem{type=netherite_hoe;value=1}",
-//                "helditem{type=netherite_pickaxe;value=-2}",
-//        };
-
-        BlockManager manager = BlockManager.getInstance();
-
-        List<BlockConfig> configs = new ArrayList<>();
-        for (Material material : materials) {
-            BlockConfig blockConfig =  new BlockConfig(hardness, material, false, modifiers, triggers);
-            configs.add(blockConfig);
-            manager.addConfig(material, blockConfig);
-        }
-        return configs;
     }
 
     public void mockConfig(Config mockConfig) {
