@@ -1,5 +1,6 @@
 package me.walcriz.blockbreakspeed.block.material;
 
+import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.IType;
 import me.walcriz.blockbreakspeed.block.material.impl.MaterialBlockProvider;
 import org.bukkit.Material;
@@ -37,15 +38,18 @@ public enum MaterialType implements IType<IMaterial<?>> {
 
     private static Map<String, IMaterial<?>> materials = new HashMap<>();
     public static IMaterial<?> getMaterial(String string) {
-        if (materials.containsKey(string))
-            return materials.get(string);
+        var material = materials.get(string);
+        if (material != null)
+            return material;
 
         for (MaterialType type : values()){
             if (!type.isCorrect(string))
                 continue;
 
             try {
-                return type.createInstance(string);
+                var newMaterial = type.createInstance(string);
+                materials.put(string, newMaterial);
+                return newMaterial;
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                      NoSuchMethodException e) {
                 return null;
@@ -61,8 +65,14 @@ public enum MaterialType implements IType<IMaterial<?>> {
 
         for (MaterialType type : values()){
             IMaterial<?> typeMaterial = type.blockToMaterial.apply(block);
-            if (typeMaterial == null)
+            if (typeMaterial == null) {
+                if (Main.doDebugLog())
+                    Main.logger.info("Material was null");
                 continue;
+            }
+
+            if (Main.doDebugLog())
+                Main.logger.info("Got: " + typeMaterial.getName());
 
             if (type.priority < lastPriority)
                 continue;

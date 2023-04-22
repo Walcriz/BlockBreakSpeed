@@ -224,8 +224,10 @@ public class PlayerListener implements Listener {
         public void applyOldPotionEffects() {
             removePotionEffects();
 
-            player.addPotionEffect(slowDiggingEffect);
-            player.addPotionEffect(fastDiggingEffect);
+            if (slowDiggingEffect != null)
+                player.addPotionEffect(slowDiggingEffect);
+            if (fastDiggingEffect != null)
+                player.addPotionEffect(fastDiggingEffect);
         }
 
         public void removePotionEffects() {
