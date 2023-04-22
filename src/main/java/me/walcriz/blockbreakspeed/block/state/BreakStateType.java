@@ -17,7 +17,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public enum BreakStateType implements IType<IBreakModifier> {
-    HeldItem(HeldItemBreakModifier.class, "helditem", (settings) -> {
+    HeldItem(HeldItemBreakModifier.class, "helditem", (settings) -> { // TODO: Move into classes?
         var type = settings.getMaterial("type", "STONE");
         int value = settings.getInteger("value", 1);
         return new Object[]{ value, type };
@@ -97,7 +97,6 @@ public enum BreakStateType implements IType<IBreakModifier> {
         return classArgs;
     }
 
-    @Override
     public Object[] convertSettings(Map<String, String> settingsMap) {
         return settingsConverter.apply((BreakSettingsMap) settingsMap);
     }

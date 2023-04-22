@@ -2,22 +2,19 @@ package me.walcriz.blockbreakspeed;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import me.walcriz.blockbreakspeed.block.BlockManager;
+import me.walcriz.blockbreakspeed.block.BlockDatabase;
 import me.walcriz.blockbreakspeed.block.Hardness;
 import me.walcriz.blockbreakspeed.block.material.IMaterial;
 import me.walcriz.blockbreakspeed.block.material.MaterialType;
 import me.walcriz.blockbreakspeed.commands.ReloadCommand;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 public final class Main extends JavaPlugin {
@@ -85,7 +82,7 @@ public final class Main extends JavaPlugin {
     }
 
     private void loadBlockConfigs() {
-        BlockManager manager = BlockManager.getInstance();
+        BlockDatabase manager = BlockDatabase.getInstance();
 
         File[] configs = blockFolder.listFiles();
         if (configs == null)
@@ -140,7 +137,7 @@ public final class Main extends JavaPlugin {
     }
 
     public void reloadBlockConfigs() {
-        BlockManager manager = BlockManager.getInstance();
+        BlockDatabase manager = BlockDatabase.getInstance();
         manager.clearBlockConfigs();
         if (!isMock)
             loadBlockConfigs();

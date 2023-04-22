@@ -93,10 +93,4 @@ public enum MaterialType implements IType<IMaterial<?>> {
     public Class[] getConstructorArgs() {
         return new Class[]{ String.class };
     }
-
-    // Not needed
-    @Override
-    public Object[] convertSettings(Map<String, String> settingsMap) {
-        return new Object[0];
-    }
 }

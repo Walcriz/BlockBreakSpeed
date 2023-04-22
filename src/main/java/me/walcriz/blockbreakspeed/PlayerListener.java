@@ -9,13 +9,12 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerDigType;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
-import me.walcriz.blockbreakspeed.block.BlockManager;
+import me.walcriz.blockbreakspeed.block.BlockDatabase;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,7 +66,7 @@ public class PlayerListener implements Listener {
         Location location = blockLocation.toLocation(player.getWorld());
         Block block = location.getBlock();
 
-        BlockManager manager = BlockManager.getInstance();
+        BlockDatabase manager = BlockDatabase.getInstance();
         if (!manager.contains(block))
             return;
 
@@ -89,7 +88,7 @@ public class PlayerListener implements Listener {
         if (!player.getGameMode().equals(GameMode.SURVIVAL))
             return;
 
-        BlockManager manager = BlockManager.getInstance();
+        BlockDatabase manager = BlockDatabase.getInstance();
         if (!manager.contains(block))
             return;
 
@@ -114,7 +113,7 @@ public class PlayerListener implements Listener {
         if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))
             return;
 
-        BlockManager manager = BlockManager.getInstance();
+        BlockDatabase manager = BlockDatabase.getInstance();
         Block block = event.getBlock();
         if (!manager.contains(block))
             return;
@@ -156,7 +155,7 @@ public class PlayerListener implements Listener {
     }
 
     private void executeTriggers(TriggerType type, Player player, Block block) {
-        BlockManager.getInstance().executeTriggers(player, block, type);
+        BlockDatabase.getInstance().executeTriggers(player, block, type);
     }
 
     public void applyEffects(Player player, MiningStatus status) {
@@ -217,7 +216,7 @@ public class PlayerListener implements Listener {
             slowDiggingEffect = player.getPotionEffect(PotionEffectType.SLOW_DIGGING);
             fastDiggingEffect = player.getPotionEffect(PotionEffectType.FAST_DIGGING);
 
-            BlockManager manager = BlockManager.getInstance();
+            BlockDatabase manager = BlockDatabase.getInstance();
             config = manager.getBlockConfig(block);
         }
 
@@ -236,7 +235,7 @@ public class PlayerListener implements Listener {
         }
 
         public EffectValues getEffectValues() {
-            BreakModifierMap modifierMap = BlockManager.getInstance().getModifierMap(block);
+            BreakModifierMap modifierMap = BlockDatabase.getInstance().getModifierMap(block);
             return config.getEffectValues(modifierMap, player, getHeldItem(), block);
         }
 

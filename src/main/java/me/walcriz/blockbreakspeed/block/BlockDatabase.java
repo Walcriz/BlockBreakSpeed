@@ -1,24 +1,21 @@
 package me.walcriz.blockbreakspeed.block;
 
-import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.material.IMaterial;
-import me.walcriz.blockbreakspeed.block.material.MaterialType;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public final class BlockManager {
-    private static BlockManager instance;
-    public static BlockManager getInstance() {
+public final class BlockDatabase {
+    private static BlockDatabase instance;
+    public static BlockDatabase getInstance() {
         if (instance == null)
-            instance = new BlockManager();
+            instance = new BlockDatabase();
         return instance;
     }
 
-    private BlockManager() {}
+    private BlockDatabase() {}
 
     private BlockConfigMap blockConfigMap = new BlockConfigMap(); // TODO: Populate this map
 
