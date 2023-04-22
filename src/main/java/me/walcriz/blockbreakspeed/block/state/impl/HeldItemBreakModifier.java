@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public record HeldItemBreakModifier(Material type, int value) implements IBreakModifier {
+public record HeldItemBreakModifier(int value, Material type) implements IBreakModifier {
     @Override
     public int getModifierForPlayer(Player player) {
         PlayerInventory inventory = player.getInventory();

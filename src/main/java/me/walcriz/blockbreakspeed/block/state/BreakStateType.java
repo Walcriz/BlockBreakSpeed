@@ -1,10 +1,12 @@
 package me.walcriz.blockbreakspeed.block.state;
 
 import me.walcriz.blockbreakspeed.block.IType;
+import me.walcriz.blockbreakspeed.block.state.impl.EffectBreakModifier;
 import me.walcriz.blockbreakspeed.block.state.impl.HeldItemBreakModifier;
 import me.walcriz.blockbreakspeed.block.state.impl.SneakingBreakModifier;
 import me.walcriz.blockbreakspeed.utils.Pair;
 import org.bukkit.Material;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,20 +18,27 @@ import java.util.regex.Pattern;
 
 public enum BreakStateType implements IType<IBreakModifier> {
     HeldItem(HeldItemBreakModifier.class, "helditem", (settings) -> {
-        Material type = Material.getMaterial(settings.getOrDefault("type", "STONE"));
-        int value = Integer.parseInt(settings.getOrDefault("value", "1"));
-        return new Object[]{ type, value };
-    }, new Class[]{ Material.class, Integer.class }),
+        Material type = settings.getMaterial("type", Material.STONE);
+        int value = settings.getInteger("value", 1);
+        return new Object[]{ value, type };
+    }, new Class[]{ Integer.class, Material.class }),
 
     Sneaking(SneakingBreakModifier.class, "sneaking", (settings) -> {
-        int value = Integer.parseInt(settings.getOrDefault("value", "1"));
+        int value = settings.getInteger("value", 1);
         return new Object[]{ value };
     }, new Class[]{ Integer.class }),
+
+    Effect(EffectBreakModifier.class, "effect", (settings) -> {
+        PotionEffectType type = settings.getPotionEffect("type", PotionEffectType.FAST_DIGGING);
+        int level = settings.getInteger("level", -1);
+        int value = settings.getInteger("value", 1);
+        return new Object[]{ value, type, level };
+    }, new Class[]{ Integer.class, PotionEffectType.class, Integer.class })
     ;
 
     private Class<? extends IBreakModifier> clazz;
     private String configName;
-    private Function<Map<String, String>, Object[]> settingsConverter;
+    private Function<BreakSettingsMap, Object[]> settingsConverter;
     private Class[] classArgs;
 
     /**
@@ -38,7 +47,7 @@ public enum BreakStateType implements IType<IBreakModifier> {
      * @param settingsConverter Converter to convert string config values to objects
      * @param classArgs Argument types for *clazz*
      */
-    BreakStateType(Class<? extends IBreakModifier> clazz, String configName, Function<Map<String, String>, Object[]> settingsConverter, Class[] classArgs) {
+    BreakStateType(Class<? extends IBreakModifier> clazz, String configName, Function<BreakSettingsMap, Object[]> settingsConverter, Class[] classArgs) {
         this.clazz = clazz;
         this.configName = configName;
         this.settingsConverter = settingsConverter;
@@ -60,7 +69,7 @@ public enum BreakStateType implements IType<IBreakModifier> {
                 continue;
 
             String[] settings = dataString.split(";");
-            Map<String, String> settingsMap = new HashMap<>();
+            BreakSettingsMap settingsMap = new BreakSettingsMap();
             Arrays.stream(settings).forEach((setting) -> {
                 String[] parts = setting.split("=");
                 settingsMap.put(parts[0], parts[1]);
@@ -90,7 +99,7 @@ public enum BreakStateType implements IType<IBreakModifier> {
 
     @Override
     public Object[] convertSettings(Map<String, String> settingsMap) {
-        return settingsConverter.apply(settingsMap);
+        return settingsConverter.apply((BreakSettingsMap) settingsMap);
     }
 
 }

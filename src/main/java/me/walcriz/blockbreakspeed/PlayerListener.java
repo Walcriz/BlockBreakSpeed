@@ -20,10 +20,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
@@ -150,7 +148,10 @@ public class PlayerListener implements Listener {
     }
 
     public void stopMining(Player player, Block block) {
-        removeEffects(player);
+        MiningStatus status = playersMining.get(player);
+        status.applyOldPotionEffects();
+
+        playersMining.remove(player);
         executeTriggers(TriggerType.Stop, player, block);
     }
 
@@ -168,14 +169,9 @@ public class PlayerListener implements Listener {
         player.addPotionEffect(fatigueEffect);
     }
 
-    public void removeEffects(Player player) {
-        player.removePotionEffect(PotionEffectType.FAST_DIGGING);
-        player.removePotionEffect(PotionEffectType.SLOW_DIGGING);
-    }
-
     public void removeAllEffects() {
         playersMining.forEach((player, status) -> {
-            removeEffects(player);
+            status.applyOldPotionEffects();
         });
 
         playersMining = new HashMap<>();
@@ -209,14 +205,32 @@ public class PlayerListener implements Listener {
         public Block block;
         public int ticksSinceLastAnimation = 0;
 
+        PotionEffect slowDiggingEffect;
+        PotionEffect fastDiggingEffect;
+
         private BlockConfig config;
 
         public MiningStatus(Player player, Block block) {
             this.player = player;
             this.block = block;
 
+            slowDiggingEffect = player.getPotionEffect(PotionEffectType.SLOW_DIGGING);
+            fastDiggingEffect = player.getPotionEffect(PotionEffectType.FAST_DIGGING);
+
             BlockManager manager = BlockManager.getInstance();
             config = manager.getBlockConfig(block.getType());
+        }
+
+        public void applyOldPotionEffects() {
+            removePotionEffects();
+
+            player.addPotionEffect(slowDiggingEffect);
+            player.addPotionEffect(fastDiggingEffect);
+        }
+
+        public void removePotionEffects() {
+            player.removePotionEffect(PotionEffectType.SLOW_DIGGING);
+            player.removePotionEffect(PotionEffectType.FAST_DIGGING);
         }
 
         public EffectValues getEffectValues() {
