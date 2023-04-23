@@ -1,10 +1,9 @@
 package me.walcriz.blockbreakspeed.block;
 
-import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -19,29 +18,44 @@ public record Hardness(int base, int min, int max) {
      * @return Our target hardness in procent
      * @see <a href="https://minecraft.fandom.com/wiki/Breaking#Calculation">How minecraft calculates hardness</a>
      */
-    public double calculateHardnessProcent(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
+    public double calculateSpeedDiff(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
+        boolean isValidTool = heldItem != null && block.isValidTool(heldItem);
+        boolean isPreferredTool = heldItem != null && block.isPreferredTool(heldItem);
+        boolean requiresValidTool = block.getBlockData().requiresCorrectToolForDrops();
+
+        var hardness = block.getType().getHardness();
+
+        if (hardness <= 0) return 1;
+
+        var speedMultiplier = 1.0;
+        if (isPreferredTool) {
+            var toolType = heldItem.getType();
+            speedMultiplier = getToolMultiplier(toolType);
+            var efficiency = heldItem.getEnchantmentLevel(Enchantment.DIG_SPEED);
+            if (efficiency > 0) {
+                speedMultiplier += efficiency * efficiency + 1;
+            }
+        }
+
+        // Haste and fatigue
+
+        //
+
+        // damage = speedmilti / hardness / (reqvalidTool ? 30 : 100)
+        // damage * ((reqvalidTool ? 30 : 100) * hardness = speedmulti
+
+        // hardnessProcent = speedMultiafter / speedMultiBefore
 
         int ticks = calculateHardnessTicks(modifierMap, player);
 
         // Get block max damage
         double damage = 1d / ticks;
-        damage *= block.getBreakSpeed(player);
 
-        BlockData blockData = block.getBlockData();
-        boolean isPreferredTool = heldItem != null && blockData.isPreferredTool(heldItem);
+        var speedMutliplierAfter = damage * ((requiresValidTool && isValidTool) ? 30 : 100) * hardness;
+        var multiplierDiff = speedMutliplierAfter / speedMultiplier; // Now we know how much haste and fatigue should make up
+        System.out.println(multiplierDiff);
 
-        damage *= blockData.requiresCorrectToolForDrops() && isPreferredTool ? 30 : 100; // Do I really have to make my own list of every block? That'd be a pain
-        // ^ Maybe not, this seems to be the good "hacky" way to do it
-        // Nah found a better way.
-
-        double speedMultiplier = damage / block.getBreakSpeed(player);
-
-        // This is the one we want
-        double hardnessProcent = speedMultiplier / (isPreferredTool ? getToolMultiplier(heldItem.getType()) : 1);
-        if (Main.doDebugLog())
-            Main.logger.info("Got 'hardnessProcent: " + hardnessProcent + "' for player: " + player.getName());
-
-        return hardnessProcent;
+        return multiplierDiff;
     }
 
     public int calculateHardnessTicks(BreakModifierMap modifierMap, Player player) {
