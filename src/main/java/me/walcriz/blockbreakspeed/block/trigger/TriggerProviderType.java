@@ -28,7 +28,7 @@ public enum TriggerProviderType implements IType<ITriggerProvider> {
                 return type.createInstance(value);
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                      NoSuchMethodException e) {
-                Main.getInstance().logger.severe("Could not parse trigger settings for key: '" + key + "' and value: '" + value + "'");
+                Main.getPluginLogger().severe("Could not parse trigger settings for key: '" + key + "' and value: '" + value + "'");
                 e.printStackTrace();
                 return null;
             }

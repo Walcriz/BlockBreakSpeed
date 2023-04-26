@@ -8,7 +8,7 @@ public class EffectValues {
     public EffectValues(int hasteValue, int fatigueValue) {
         this.fatigueValue = fatigueValue;
         this.hasteValue = hasteValue;
-        this.usePacketAnimations = hasteValue > 3 && !Main.config.disableAnimations; // Minecraft doesn't show animations for breaking over haste level 3
+        this.usePacketAnimations = hasteValue > 3 && !Main.getConfiguration().disableAnimations; // Minecraft doesn't show animations for breaking over haste level 3
     }
 
     @Override

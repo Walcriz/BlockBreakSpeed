@@ -28,11 +28,13 @@ public final class Main extends JavaPlugin {
     private static ProtocolManager protocolManager;
     public static ProtocolManager getProtocolManager() { return protocolManager; }
 
-    public static Config config;
+    private static Config config;
+    public static Config getConfiguration() { return config; }
 
-    public static Logger logger;
+    private static Logger logger;
+    public static Logger getPluginLogger() { return logger; }
 
-    public File blockFolder;
+    private File blockFolder;
 
     public static boolean doDebugLog() { return config.debugLogging; }
 

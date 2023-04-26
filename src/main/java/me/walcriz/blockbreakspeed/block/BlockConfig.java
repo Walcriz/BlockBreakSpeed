@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 public class BlockConfig {
-    public boolean cancelBreakEvent = false;
+    private boolean cancelBreakEvent = false;
 
     private IMaterial<?> material;
     public IMaterial<?> getMaterial() { return material; }
@@ -116,7 +116,7 @@ public class BlockConfig {
         EffectValues effectValues = new EffectValues(xValue, yValue);
 
         if (Main.doDebugLog())
-            Main.logger.info(effectValues.toString());
+            Main.getPluginLogger().info(effectValues.toString());
 
         return effectValues;
 

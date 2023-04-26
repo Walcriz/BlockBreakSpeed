@@ -13,7 +13,7 @@ public class BlockConfigMap extends HashMap<IMaterial<?>, BlockConfig> {
         var contains = this.containsKey(material);
 
         if (Main.doDebugLog()) {
-            var logger = Main.logger;
+            var logger = Main.getPluginLogger();
             if (!contains) {
                 logger.info("Material: " + material.getName() + " does not have any config!");
             } else {

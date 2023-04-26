@@ -67,12 +67,12 @@ public enum MaterialType implements IType<IMaterial<?>> {
             IMaterial<?> typeMaterial = type.blockToMaterial.apply(block);
             if (typeMaterial == null) {
                 if (Main.doDebugLog())
-                    Main.logger.info("Material was null");
+                    Main.getPluginLogger().info("Material was null");
                 continue;
             }
 
             if (Main.doDebugLog())
-                Main.logger.info("Got: " + typeMaterial.getName());
+                Main.getPluginLogger().info("Got: " + typeMaterial.getName());
 
             if (type.priority < lastPriority)
                 continue;

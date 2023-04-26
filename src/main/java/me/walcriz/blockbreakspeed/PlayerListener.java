@@ -35,7 +35,7 @@ public class PlayerListener implements Listener {
     private Map<UUID, MiningStatus> playersMining = new HashMap<>();
 
     private BukkitTask checkTask;
-    private Logger logger = Main.getInstance().getLogger();
+    private final Logger logger = Main.getPluginLogger();
 
     public PlayerListener() {
         // Setup protocol lib listeners
@@ -196,10 +196,10 @@ public class PlayerListener implements Listener {
         }
     }
 
-    int repeatTime = Main.config.animationTaskRepeatTime;
-    int animationTime = Main.config.animationDelay;
+    int repeatTime = Main.getConfiguration().animationTaskRepeatTime;
+    int animationTime = Main.getConfiguration().animationDelay;
     public void runAnimationTask() {
-        if (Main.config.disableAnimations)
+        if (Main.getConfiguration().disableAnimations)
             return;
 
         checkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
