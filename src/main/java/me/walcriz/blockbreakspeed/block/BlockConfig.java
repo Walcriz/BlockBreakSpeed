@@ -6,7 +6,6 @@ import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
 import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
-import me.walcriz.blockbreakspeed.exceptions.TargetNegativeException;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +25,7 @@ public class BlockConfig {
     private boolean suppressDrops = false;
     public boolean doSuppressDrops() { return suppressDrops; }
 
-    public BlockConfig(Hardness hardness, BlockMaterial<?> material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
+    public BlockConfig(Hardness hardness, BlockMaterial<?> material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) {
         this.material = material;
         this.hardness = hardness;
         this.suppressDrops = suppressDrops;

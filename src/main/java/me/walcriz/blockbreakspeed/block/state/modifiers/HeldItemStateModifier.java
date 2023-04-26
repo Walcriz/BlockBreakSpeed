@@ -1,4 +1,4 @@
-package me.walcriz.blockbreakspeed.block.state.impl;
+package me.walcriz.blockbreakspeed.block.state.modifiers;
 
 import me.walcriz.blockbreakspeed.block.state.IStateModifier;
 import org.bukkit.Material;
