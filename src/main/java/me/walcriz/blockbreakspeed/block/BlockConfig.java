@@ -5,7 +5,6 @@ import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
 import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
-import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -54,9 +53,8 @@ public class BlockConfig {
      * @param heldItem The current held item for the player
      * @param block The block being mined
      * @return The calculated or cached {@link EffectValues} to apply
-     * @throws TargetCalculationException Thrown if the target could not be reached
      */
-    public EffectValues getEffectValues(StateModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) throws TargetCalculationException {
+    public EffectValues getEffectValues(StateModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
 //        if (heldItem == null && effectValuesCache.containsKey(Material.AIR)) // If we already know the solution stop
 //            return effectValuesCache.get(block.getType());
 //        else if (heldItem != null && effectValuesCache.containsKey(heldItem.getType()))
