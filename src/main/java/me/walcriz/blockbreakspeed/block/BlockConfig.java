@@ -3,7 +3,7 @@ package me.walcriz.blockbreakspeed.block;
 import me.walcriz.blockbreakspeed.EffectValues;
 import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
-import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
 import me.walcriz.blockbreakspeed.exceptions.TargetNegativeException;
@@ -38,7 +38,7 @@ public class BlockConfig {
     }
 
     private void createBlockInfo(String[] modifierStrings, String[] triggerStrings) {
-        blockInfo = new BlockInfo(new BreakModifierMap(), new TriggerMap());
+        blockInfo = new BlockInfo(new StateModifierMap(), new TriggerMap());
         blockInfo.populateInfo(modifierStrings, triggerStrings);
     }
 
@@ -57,7 +57,7 @@ public class BlockConfig {
      * @return The calculated or cached {@link EffectValues} to apply
      * @throws TargetCalculationException Thrown if the target could not be reached
      */
-    public EffectValues getEffectValues(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) throws TargetCalculationException {
+    public EffectValues getEffectValues(StateModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) throws TargetCalculationException {
 //        if (heldItem == null && effectValuesCache.containsKey(Material.AIR)) // If we already know the solution stop
 //            return effectValuesCache.get(block.getType());
 //        else if (heldItem != null && effectValuesCache.containsKey(heldItem.getType()))

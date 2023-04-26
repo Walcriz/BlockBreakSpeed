@@ -7,7 +7,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.HashMap;
 import java.util.function.Function;
 
-public class BreakSettingsMap extends HashMap<String, String> {
+public class StateSettingsMap extends HashMap<String, String> {
 
     public int getInteger(String key, int defaultValue) {
         String value = this.get(key);

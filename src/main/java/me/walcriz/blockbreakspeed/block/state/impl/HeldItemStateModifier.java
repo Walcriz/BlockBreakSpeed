@@ -1,12 +1,12 @@
 package me.walcriz.blockbreakspeed.block.state.impl;
 
-import me.walcriz.blockbreakspeed.block.state.IBreakModifier;
+import me.walcriz.blockbreakspeed.block.state.IStateModifier;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public record HeldItemBreakModifier(int value, Material type) implements IBreakModifier {
+public record HeldItemStateModifier(int value, Material type) implements IStateModifier {
     @Override
     public int getModifierForPlayer(Player player) {
         PlayerInventory inventory = player.getInventory();

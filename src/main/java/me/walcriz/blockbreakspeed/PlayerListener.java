@@ -10,7 +10,7 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerDigType;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
 import me.walcriz.blockbreakspeed.block.BlockDatabase;
-import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -100,7 +100,7 @@ public class PlayerListener implements Listener {
         event.setInstaBreak(false); // Disable insta-break for blocks like mushroom blocks
 
         BlockConfig config = manager.getBlockConfig(block);
-        BreakModifierMap map = config.getBlockInfo().modifierMap();
+        StateModifierMap map = config.getBlockInfo().modifierMap();
 
         // See if you should insta-break the block
         if (config.getHardness().calculateHardnessTicks(map, player) > 0)
@@ -262,7 +262,7 @@ public class PlayerListener implements Listener {
         }
 
         public EffectValues getEffectValues() {
-            BreakModifierMap modifierMap = BlockDatabase.getInstance().getModifierMap(block);
+            StateModifierMap modifierMap = BlockDatabase.getInstance().getModifierMap(block);
             return config.getEffectValues(modifierMap, player, getHeldItem(), block);
         }
 

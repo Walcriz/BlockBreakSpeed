@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 
 import java.util.EnumMap;
 
-public class BreakModifierMap extends EnumMap<BreakStateType, IBreakModifier> {
-    public BreakModifierMap() {
-        super(BreakStateType.class);
+public class StateModifierMap extends EnumMap<StateType, IStateModifier> {
+    public StateModifierMap() {
+        super(StateType.class);
     }
 
     /**
@@ -18,7 +18,7 @@ public class BreakModifierMap extends EnumMap<BreakStateType, IBreakModifier> {
      */
     public int getCurrentModifiers(Player player) {
         int value = 0;
-        for (IBreakModifier modifier : this.values()) {
+        for (IStateModifier modifier : this.values()) {
             value += modifier.getModifierForPlayer(player);
         }
         return value;
@@ -28,7 +28,7 @@ public class BreakModifierMap extends EnumMap<BreakStateType, IBreakModifier> {
      * Add modifier to map
      * @param modifier The modifier to add
      */
-    public void addModifier(Pair<BreakStateType, IBreakModifier> modifier) {
+    public void addModifier(Pair<StateType, IStateModifier> modifier) {
         this.put(modifier.getKey(), modifier.getValue());
     }
 }

@@ -1,7 +1,7 @@
 package me.walcriz.blockbreakspeed.block;
 
 import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
-import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
 import org.bukkit.block.Block;
@@ -19,7 +19,7 @@ public final class BlockDatabase {
 
     private BlockConfigMap blockConfigMap = new BlockConfigMap(); // TODO: Populate this map
 
-    public BreakModifierMap getModifierMap(Block block) {
+    public StateModifierMap getModifierMap(Block block) {
         return blockConfigMap.get(block).getBlockInfo().modifierMap();
     }
 
