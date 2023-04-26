@@ -55,11 +55,6 @@ public class BlockConfig {
      * @return The calculated or cached {@link EffectValues} to apply
      */
     public EffectValues getEffectValues(StateModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
-//        if (heldItem == null && effectValuesCache.containsKey(Material.AIR)) // If we already know the solution stop
-//            return effectValuesCache.get(block.getType());
-//        else if (heldItem != null && effectValuesCache.containsKey(heldItem.getType()))
-//            return effectValuesCache.get(heldItem.getType());
-
         if (cancelBreakEvent)
             return new EffectValues(0, 0);
 
@@ -116,40 +111,6 @@ public class BlockConfig {
             Main.getPluginLogger().info(effectValues.toString());
 
         return effectValues;
-
-//        Function<Double, Double> solveForY = (x) -> Math.log(hardnessTarget / (hasteIncrease * x + 1)) / Math.log(fatigueMultiplier);
-//
-//        int xValue = -1;
-//        int yValue = -1;
-//        for (int x = 0; x < hasteMaxLevel; x++) {
-//            double y = solveForY.apply((double) x);
-//
-//            if (y < 0) // y cant be less than 0
-//                continue;
-//
-//            if (y > fatigueMaxLevel) // y cant be higher than 4 (A minecraft restriction)
-//                break; // This means that we already failed/found to find a whole number value (We will use the rounded value)
-//
-//            if (y % 1 == 0) { // Prefer whole numbers
-//                xValue = x;
-//                yValue = (int) Math.round(y);
-//                break; // We know two very good values. Stop iterating
-//            } else if (yValue < 0) { // If we have no value use that
-//                xValue = x;
-//                yValue = (int) Math.round(y);
-//            }
-//        }
-//
-//        if (yValue < 0)
-//            throw new TargetCalculationException("Failed to find a non negative y value for block: " + material.getName() + "! Was: hardnessTarget=" + hardnessTarget + " | x=" + xValue + " | y=" + yValue);
-//
-//        EffectValues effectValues = new EffectValues(xValue, yValue);
-////        effectValuesCache.put(itemMaterial, effectValues);
-//
-//        if (Main.doDebugLog())
-//            Main.logger.info(effectValues.toString());
-//
-//        return effectValues;
     }
 
     private double getFatigueMultiplier(int level) {
