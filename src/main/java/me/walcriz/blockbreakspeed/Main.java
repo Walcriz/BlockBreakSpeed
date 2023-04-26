@@ -6,7 +6,7 @@ import me.walcriz.blockbreakspeed.block.BlockDatabase;
 import me.walcriz.blockbreakspeed.block.Hardness;
 import me.walcriz.blockbreakspeed.block.material.IMaterial;
 import me.walcriz.blockbreakspeed.block.material.MaterialType;
-import me.walcriz.blockbreakspeed.commands.ReloadCommand;
+import me.walcriz.blockbreakspeed.commands.AdminCommand;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -71,14 +71,14 @@ public final class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(playerListener, this);
 
         // Register commands
-        this.getCommand("bbsreload").setExecutor(new ReloadCommand());
+        this.getCommand("blockbreakspeed").setExecutor(new AdminCommand());
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
         config = null;
-        playerListener.cancelTask();
+        playerListener.cancelAnimationTask();
     }
 
     private void loadBlockConfigs() {
@@ -136,7 +136,7 @@ public final class Main extends JavaPlugin {
         config = mockConfig;
     }
 
-    public void reloadBlockConfigs() {
+    public void reloadConfigs() {
         BlockDatabase manager = BlockDatabase.getInstance();
         manager.clearBlockConfigs();
         if (!isMock)
@@ -144,8 +144,12 @@ public final class Main extends JavaPlugin {
 
         config.reloadConfig(this);
 
-        playerListener.cancelTask();
+        playerListener.cancelAnimationTask();
         playerListener.removeAllEffects();
+
+        // Re-register events
+        playerListener = new PlayerListener();
+        Bukkit.getPluginManager().registerEvents(playerListener, this);
     }
 
     public Main() {}

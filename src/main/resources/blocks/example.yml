@@ -6,11 +6,7 @@ block: STONE
 # Disable drops of this block. Defaults to false
 disable-drops: false
 
-# This value later gets divided by 100
-# See how minecraft calculates breaking speeds: https://minecraft.fandom.com/wiki/Breaking#Calculation
 hardness:
-  keep-vanilla-hardness-modifiers: false # Please forgive the long name
-
   base: 20 # In TICKS
   min: 5
   max: 30

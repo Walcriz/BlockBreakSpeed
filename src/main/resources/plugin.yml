@@ -8,5 +8,7 @@ website: walcriz.net
 depend: [ ProtocolLib ]
 
 commands:
-  bbsreload:
-    permission: blockbreakspeed.config.reload
+  blockbreakspeed:
+    permission: blockbreakspeed.admin
+    usage: blockbreakspeed <reload|info>
+    description: The blockbreakspeed admin command prefix

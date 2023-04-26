@@ -6,5 +6,9 @@ animations:
   # Disable packets that make the hand animate
   disable: false
 
-  # The delay in TICKS between the player playing the "hit" animation
-  delay: 10
+  # The delay in TICKS between the player playing the "swing" animation
+  delay: 3
+
+  # The time between each animation send check.
+  # This should probably be left at 1. Only change it if you're having performance issues.
+  task-repeat-time: 1

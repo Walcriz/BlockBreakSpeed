@@ -28,10 +28,12 @@ public class Config {
         this.disableAnimations = config.getBoolean("animations.disable");
         this.animationDelay = config.getInt("animations.delay");
         this.debugLogging = config.getBoolean("debug-logging");
+        this.animationTaskRepeatTime = config.getInt("animations.task-repeat-time");
     }
 
     public boolean disableAnimations = true;
     public int animationDelay = 10;
+    public int animationTaskRepeatTime = 1;
 
     public boolean debugLogging = false;
 }

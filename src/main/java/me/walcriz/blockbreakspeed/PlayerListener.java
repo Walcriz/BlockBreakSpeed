@@ -25,15 +25,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Logger;
 
 public class PlayerListener implements Listener {
-    private Map<Player, MiningStatus> playersMining = new HashMap<>();
+    private Map<UUID, MiningStatus> playersMining = new HashMap<>();
 
-    private int checkTask = -1;
+    private BukkitTask checkTask;
     private Logger logger = Main.getInstance().getLogger();
 
     public PlayerListener() {
@@ -51,8 +52,12 @@ public class PlayerListener implements Listener {
                 });
             }
         });
+
+        // Start animation task
+        runAnimationTask();
     }
 
+    // region Block Breaking Logic
     private void onDigging(PacketEvent event) {
         if (Main.doDebugLog())
             event.getPlayer().sendMessage("Digging");
@@ -119,7 +124,8 @@ public class PlayerListener implements Listener {
             return;
 
 
-        if (!playersMining.containsKey(event.getPlayer()))
+        Player player = event.getPlayer();
+        if (!playersMining.containsKey(player.getUniqueId()))
             return;
 
         // Disable drops if wanted
@@ -130,7 +136,7 @@ public class PlayerListener implements Listener {
 
     public void startMining(Player player, Block block) {
         MiningStatus status = new MiningStatus(player, block);
-        playersMining.put(player, status);
+        playersMining.put(player.getUniqueId(), status);
         applyEffects(player, status);
 
         executeTriggers(TriggerType.Start, player, block);
@@ -147,10 +153,10 @@ public class PlayerListener implements Listener {
     }
 
     public void stopMining(Player player, Block block) {
-        MiningStatus status = playersMining.get(player);
+        MiningStatus status = playersMining.get(player.getUniqueId());
         status.applyOldPotionEffects();
 
-        playersMining.remove(player);
+        playersMining.remove(player.getUniqueId());
         executeTriggers(TriggerType.Stop, player, block);
     }
 
@@ -175,11 +181,10 @@ public class PlayerListener implements Listener {
 
         playersMining = new HashMap<>();
     }
+    // endregion
 
+    // region Animation
     public void playAnimation(Player player) {
-        if (Main.config.disableAnimations)
-            return;
-
         PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.ANIMATION);
         packetContainer.getIntegers().write(0, player.getEntityId());
         packetContainer.getIntegers().write(0, 1);
@@ -191,13 +196,35 @@ public class PlayerListener implements Listener {
         }
     }
 
-    public void cancelTask() {
-        if (checkTask == -1)
+    int repeatTime = Main.config.animationTaskRepeatTime;
+    int animationTime = Main.config.animationDelay;
+    public void runAnimationTask() {
+        if (Main.config.disableAnimations)
             return;
 
-        Bukkit.getScheduler().cancelTask(checkTask);
-        checkTask = -1;
+        checkTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                Main.getInstance(), this::animationTask,
+                repeatTime, repeatTime);
     }
+
+    public void animationTask() {
+        Collection<MiningStatus> statuses = playersMining.values();
+        for (MiningStatus status : statuses) {
+            status.ticksSinceLastAnimation += repeatTime;
+            if (status.ticksSinceLastAnimation >= animationTime) {
+                playAnimation(status.player);
+            }
+        }
+    }
+
+    public void cancelAnimationTask() {
+        if (checkTask == null)
+            return;
+
+        checkTask.cancel();
+        checkTask = null;
+    }
+    // endregion
 
     public static class MiningStatus {
         public Player player;
@@ -207,7 +234,7 @@ public class PlayerListener implements Listener {
         PotionEffect slowDiggingEffect;
         PotionEffect fastDiggingEffect;
 
-        private BlockConfig config;
+        private final BlockConfig config;
 
         public MiningStatus(Player player, Block block) {
             this.player = player;
