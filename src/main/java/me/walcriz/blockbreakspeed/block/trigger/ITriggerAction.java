@@ -3,14 +3,14 @@ package me.walcriz.blockbreakspeed.block.trigger;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public abstract class ITriggerProvider {
+public abstract class ITriggerAction {
 
     private final String value;
     protected String getValue() {
         return value;
     }
 
-    public ITriggerProvider(String value) {
+    public ITriggerAction(String value) {
         this.value = value;
     }
 

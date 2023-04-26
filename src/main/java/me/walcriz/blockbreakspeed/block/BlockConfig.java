@@ -74,7 +74,7 @@ public class BlockConfig {
         // (5 * ht) / f(y) = x
         // where ht = hardnessTarget
 
-        Function<Integer, Double> solveForX = (y) -> ((1 / hasteIncrease) * speedMultiplierDiff) / getFatuigeMultiplier(y) - 1 / hasteIncrease;
+        Function<Integer, Double> solveForX = (y) -> ((1 / hasteIncrease) * speedMultiplierDiff) / getFatigueMultiplier(y) - 1 / hasteIncrease;
 
         int xValue = -1;
         int yValue = -1;
@@ -155,7 +155,7 @@ public class BlockConfig {
 //        return effectValues;
     }
 
-    private double getFatuigeMultiplier(int level) {
+    private double getFatigueMultiplier(int level) {
         return switch (level) {
             case 0 -> 1.0;
             case 1 -> 0.3;

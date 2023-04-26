@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-public enum StateType implements IType<IStateModifier> {
+public enum StateType implements IType<IStateModifier> { // TODO: Refactor
     HeldItem(HeldItemStateModifier.class, "helditem", (settings) -> { // TODO: Move into classes?
         var type = settings.getMaterial("type", "STONE");
         int value = settings.getInteger("value", 1);
