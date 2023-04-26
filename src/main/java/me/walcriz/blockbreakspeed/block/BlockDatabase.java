@@ -1,6 +1,6 @@
 package me.walcriz.blockbreakspeed.block;
 
-import me.walcriz.blockbreakspeed.block.material.IMaterial;
+import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
@@ -43,7 +43,7 @@ public final class BlockDatabase {
         return blockConfigMap.containsKey(material);
     }
 
-    public void addConfig(IMaterial<?> blockType, BlockConfig config) {
+    public void addConfig(BlockMaterial<?> blockType, BlockConfig config) {
         getBlockConfigMap().put(blockType, config);
     }
 

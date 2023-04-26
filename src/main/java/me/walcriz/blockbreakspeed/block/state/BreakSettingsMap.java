@@ -1,7 +1,7 @@
 package me.walcriz.blockbreakspeed.block.state;
 
-import me.walcriz.blockbreakspeed.block.material.IMaterial;
-import me.walcriz.blockbreakspeed.block.material.MaterialType;
+import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
+import me.walcriz.blockbreakspeed.block.material.MaterialManager;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
@@ -37,12 +37,13 @@ public class BreakSettingsMap extends HashMap<String, String> {
         return converter.apply(value);
     }
 
-    public IMaterial<?> getMaterial(String key, String defaultValue) {
+    public BlockMaterial<?> getMaterial(String key, String defaultValue) {
         String value = this.get(key);
+        MaterialManager manager = MaterialManager.getInstance();
         if (value == null)
-            return MaterialType.getMaterial(defaultValue);
+            return manager.getMaterial(defaultValue);
 
-        return MaterialType.getMaterial(value);
+        return manager.getMaterial(value);
     }
 
     public PotionEffectType getPotionEffect(String key, PotionEffectType defaultValue) {

@@ -1,33 +1,22 @@
 package me.walcriz.blockbreakspeed.block;
 
 import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.material.IMaterial;
-import me.walcriz.blockbreakspeed.block.material.MaterialType;
+import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
+import me.walcriz.blockbreakspeed.block.material.MaterialManager;
 import org.bukkit.block.Block;
 
 import java.util.HashMap;
 
-public class BlockConfigMap extends HashMap<IMaterial<?>, BlockConfig> {
+public class BlockConfigMap extends HashMap<BlockMaterial<?>, BlockConfig> {
     public boolean containsKey(Block block) {
-        var material = MaterialType.getMaterial(block);
-        var contains = this.containsKey(material);
+        var manager = MaterialManager.getInstance();
+        var material = manager.getMaterial(block);
 
-        if (Main.doDebugLog()) {
-            var logger = Main.getPluginLogger();
-            if (!contains) {
-                logger.info("Material: " + material.getName() + " does not have any config!");
-            } else {
-                logger.info("Material: " + material.getName() + " has a config!");
-            }
-
-            logger.info("In material list:");
-            this.forEach(((iMaterial, config) -> logger.info("\t" + iMaterial.getName())));
-        }
-
-        return contains;
+        return this.containsKey(material);
     }
     public BlockConfig get(Block block) {
-        var material = MaterialType.getMaterial(block);
+        var manager = MaterialManager.getInstance();
+        var material = manager.getMaterial(block);
         return this.get(material);
     }
 }

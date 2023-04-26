@@ -4,8 +4,8 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import me.walcriz.blockbreakspeed.block.BlockDatabase;
 import me.walcriz.blockbreakspeed.block.Hardness;
-import me.walcriz.blockbreakspeed.block.material.IMaterial;
-import me.walcriz.blockbreakspeed.block.material.MaterialType;
+import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
+import me.walcriz.blockbreakspeed.block.material.MaterialManager;
 import me.walcriz.blockbreakspeed.commands.AdminCommand;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
 import org.bukkit.Bukkit;
@@ -114,7 +114,8 @@ public final class Main extends JavaPlugin {
                     continue;
                 }
 
-                IMaterial<?> material = MaterialType.getMaterial(materialName);
+                var materialManager = MaterialManager.getInstance();
+                BlockMaterial<?> material = materialManager.getMaterial(materialName);
                 if (material == null) {
                     logger.warning("No material of type: '" + materialName + "' exist");
                     continue;

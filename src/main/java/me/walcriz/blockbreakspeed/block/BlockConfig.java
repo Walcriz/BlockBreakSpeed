@@ -2,7 +2,7 @@ package me.walcriz.blockbreakspeed.block;
 
 import me.walcriz.blockbreakspeed.EffectValues;
 import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.material.IMaterial;
+import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
 import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
 import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
@@ -17,8 +17,8 @@ import java.util.function.Function;
 public class BlockConfig {
     private boolean cancelBreakEvent = false;
 
-    private IMaterial<?> material;
-    public IMaterial<?> getMaterial() { return material; }
+    private BlockMaterial<?> material;
+    public BlockMaterial<?> getMaterial() { return material; }
     private Hardness hardness;
     public Hardness getHardness() { return hardness; }
     private BlockInfo blockInfo;
@@ -26,7 +26,7 @@ public class BlockConfig {
     private boolean suppressDrops = false;
     public boolean doSuppressDrops() { return suppressDrops; }
 
-    public BlockConfig(Hardness hardness, IMaterial<?> material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
+    public BlockConfig(Hardness hardness, BlockMaterial<?> material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
         this.material = material;
         this.hardness = hardness;
         this.suppressDrops = suppressDrops;
