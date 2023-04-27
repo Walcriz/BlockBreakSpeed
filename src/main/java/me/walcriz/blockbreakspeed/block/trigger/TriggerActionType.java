@@ -1,12 +1,11 @@
 package me.walcriz.blockbreakspeed.block.trigger;
 
 import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.IType;
 import me.walcriz.blockbreakspeed.block.trigger.actions.CommandTriggerAction;
 
 import java.lang.reflect.InvocationTargetException;
 
-public enum TriggerActionType implements IType<ITriggerAction> {
+public enum TriggerActionType implements ITriggerActionType<ITriggerAction> {
     CommandProvider(CommandTriggerAction.class, "command"),
     ;
 
