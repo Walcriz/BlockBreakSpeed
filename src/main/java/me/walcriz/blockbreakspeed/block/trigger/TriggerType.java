@@ -48,7 +48,7 @@ public enum TriggerType {
     public ITriggerAction[] convertSettings(Map<String, String> settingsMap) {
         List<ITriggerAction> arguments = new ArrayList<>();
         settingsMap.forEach((key, value) -> {
-            arguments.add(TriggerProviderType.toProvider(key, value));
+            arguments.add(TriggerActionType.toAction(key, value));
         });
         return arguments.toArray(new ITriggerAction[0]);
     }

@@ -6,20 +6,20 @@ import me.walcriz.blockbreakspeed.block.trigger.actions.CommandTriggerAction;
 
 import java.lang.reflect.InvocationTargetException;
 
-public enum TriggerProviderType implements IType<ITriggerAction> {
+public enum TriggerActionType implements IType<ITriggerAction> {
     CommandProvider(CommandTriggerAction.class, "command"),
     ;
 
     private Class<? extends ITriggerAction> type;
     private String configName;
 
-    TriggerProviderType(Class<? extends ITriggerAction> type, String configName) {
+    TriggerActionType(Class<? extends ITriggerAction> type, String configName) {
         this.type = type;
         this.configName = configName;
     }
 
-    public static ITriggerAction toProvider(String key, String value) {
-        for (TriggerProviderType type : TriggerProviderType.values()) {
+    public static ITriggerAction toAction(String key, String value) {
+        for (TriggerActionType type : TriggerActionType.values()) {
             if (!key.equals(type.configName))
                 continue;
 

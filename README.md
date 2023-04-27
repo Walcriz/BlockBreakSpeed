@@ -12,7 +12,7 @@ Tested versions: 1.19.4
 - This plugin requires **ProtocolLib** to function
 - It does not include all features that **Breaker2** offers. It is very limited in scope. Such features may include:
   - **Exact** break time (*It will estimate*)
-  - All state modifiers/trigger providers supported by **Breaker2**
+  - All state state/trigger providers supported by **Breaker2**
 
 ## Issues & Pull requests
 - If you have found an issue please create a new issue with a fitting name.
