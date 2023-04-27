@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Block Break Speed package runner
+name: Package Runner
 
 on:
 #  push:
