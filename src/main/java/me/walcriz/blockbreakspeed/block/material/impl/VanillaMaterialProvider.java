@@ -13,11 +13,6 @@ public class VanillaMaterialProvider extends IMaterialProvider<Material> {
     }
 
     @Override
-    public String getName(Block block) {
-        return block.getType().name();
-    }
-
-    @Override
     public BlockMaterial<Material> materialFromBlock(Block block) {
         return addOrGetMaterial(block.getType());
     }

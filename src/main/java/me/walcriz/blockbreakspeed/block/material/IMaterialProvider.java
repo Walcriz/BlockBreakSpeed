@@ -18,7 +18,6 @@ public abstract class IMaterialProvider<T> {
     }
 
     public abstract String getName(BlockMaterial<T> material);
-    public abstract String getName(Block block);
 
     public abstract BlockMaterial<T> materialFromBlock(Block block);
     public abstract BlockMaterial<T> materialFromString(String string);
