@@ -6,7 +6,7 @@ import me.walcriz.blockbreakspeed.block.state.modifiers.SneakingStateModifier;
 
 public class SneakingStateProvider implements IStateProvider<SneakingStateModifier> {
     @Override
-    public SneakingStateModifier getModifier(StateSettingsMap settings) {
+    public SneakingStateModifier buildModifier(StateSettingsMap settings) {
         int value = settings.getInteger("value", 1);
         return new SneakingStateModifier(value);
     }

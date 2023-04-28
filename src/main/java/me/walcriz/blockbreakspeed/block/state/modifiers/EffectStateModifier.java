@@ -8,7 +8,7 @@ import org.bukkit.potion.PotionEffectType;
 public record EffectStateModifier(int value, PotionEffectType type, int level) implements IStateModifier {
 
     @Override
-    public int getModifierForPlayer(Player player) {
+    public int getModifierValueForPlayer(Player player) {
         PotionEffect effect = player.getPotionEffect(type());
         if (effect == null)
             return 0;

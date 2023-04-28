@@ -56,6 +56,6 @@ public class StateManager {
             settingsMap.put(parts[0], parts[1]);
         });
 
-        return provider.getModifier(settingsMap);
+        return provider.buildModifier(settingsMap);
     }
 }

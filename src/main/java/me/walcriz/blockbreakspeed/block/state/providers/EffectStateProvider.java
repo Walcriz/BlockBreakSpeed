@@ -7,7 +7,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class EffectStateProvider implements IStateProvider<EffectStateModifier> {
     @Override
-    public EffectStateModifier getModifier(StateSettingsMap settings) {
+    public EffectStateModifier buildModifier(StateSettingsMap settings) {
         int value = settings.getInteger("value", 1);
         PotionEffectType type = settings.getPotionEffect("type", PotionEffectType.FAST_DIGGING);
         int level = settings.getInteger("level", -1);

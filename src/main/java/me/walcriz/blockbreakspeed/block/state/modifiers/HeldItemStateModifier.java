@@ -8,7 +8,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 public record HeldItemStateModifier(int value, Material type) implements IStateModifier {
     @Override
-    public int getModifierForPlayer(Player player) {
+    public int getModifierValueForPlayer(Player player) {
         PlayerInventory inventory = player.getInventory();
         ItemStack heldItem = inventory.getItem(inventory.getHeldItemSlot());
 

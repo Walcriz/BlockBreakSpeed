@@ -7,7 +7,7 @@ import org.bukkit.Material;
 
 public class HeldItemStateProvider implements IStateProvider<HeldItemStateModifier> {
     @Override
-    public HeldItemStateModifier getModifier(StateSettingsMap settings) {
+    public HeldItemStateModifier buildModifier(StateSettingsMap settings) {
         int value = settings.getInteger("value", 1);
         var type = settings.getVanillaMaterial("type", Material.STONE);
         return new HeldItemStateModifier(value, type);
