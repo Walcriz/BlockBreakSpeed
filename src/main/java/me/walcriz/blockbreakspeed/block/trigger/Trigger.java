@@ -3,9 +3,9 @@ package me.walcriz.blockbreakspeed.block.trigger;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public record Trigger(TriggerType type, ITriggerProvider[] triggerProviders) { 
+public record Trigger(TriggerType type, ITriggerAction[] triggerProviders) {
     public void executeTriggers(Player player, Block block) {
-        for (ITriggerProvider provider :
+        for (ITriggerAction provider :
                 triggerProviders) {
             provider.doAction(player, block);
         }

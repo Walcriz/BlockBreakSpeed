@@ -1,15 +1,11 @@
 package me.walcriz.blockbreakspeed.block.state;
 
 import me.walcriz.blockbreakspeed.block.Hardness;
-import me.walcriz.blockbreakspeed.utils.Pair;
 import org.bukkit.entity.Player;
 
-import java.util.EnumMap;
+import java.util.HashSet;
 
-public class BreakModifierMap extends EnumMap<BreakStateType, IBreakModifier> {
-    public BreakModifierMap() {
-        super(BreakStateType.class);
-    }
+public class StateModifierMap extends HashSet<IStateModifier> {
 
     /**
      * Get current active modifiers for a {@link Player}
@@ -18,8 +14,8 @@ public class BreakModifierMap extends EnumMap<BreakStateType, IBreakModifier> {
      */
     public int getCurrentModifiers(Player player) {
         int value = 0;
-        for (IBreakModifier modifier : this.values()) {
-            value += modifier.getModifierForPlayer(player);
+        for (IStateModifier modifier : this) {
+            value += modifier.getModifierValueForPlayer(player);
         }
         return value;
     }
@@ -28,7 +24,7 @@ public class BreakModifierMap extends EnumMap<BreakStateType, IBreakModifier> {
      * Add modifier to map
      * @param modifier The modifier to add
      */
-    public void addModifier(Pair<BreakStateType, IBreakModifier> modifier) {
-        this.put(modifier.getKey(), modifier.getValue());
+    public void addModifier(IStateModifier modifier) {
+        this.add(modifier);
     }
 }

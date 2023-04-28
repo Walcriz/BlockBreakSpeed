@@ -45,12 +45,12 @@ public enum TriggerType {
         return null;
     }
 
-    public ITriggerProvider[] convertSettings(Map<String, String> settingsMap) {
-        List<ITriggerProvider> arguments = new ArrayList<>();
+    public ITriggerAction[] convertSettings(Map<String, String> settingsMap) {
+        List<ITriggerAction> arguments = new ArrayList<>();
         settingsMap.forEach((key, value) -> {
-            arguments.add(TriggerProviderType.toProvider(key, value));
+            arguments.add(TriggerActionType.toAction(key, value));
         });
-        return arguments.toArray(new ITriggerProvider[0]);
+        return arguments.toArray(new ITriggerAction[0]);
     }
 
 }

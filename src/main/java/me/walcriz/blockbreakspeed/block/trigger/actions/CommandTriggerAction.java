@@ -1,15 +1,14 @@
-package me.walcriz.blockbreakspeed.block.trigger.providers;
+package me.walcriz.blockbreakspeed.block.trigger.actions;
 
-import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.trigger.ITriggerProvider;
+import me.walcriz.blockbreakspeed.block.trigger.ITriggerAction;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandTriggerProvider extends ITriggerProvider {
-    public CommandTriggerProvider(String value) {
+public class CommandTriggerAction extends ITriggerAction {
+    public CommandTriggerAction(String value) {
         super(value);
     }
 

@@ -10,7 +10,7 @@ import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerDigType;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
 import me.walcriz.blockbreakspeed.block.BlockDatabase;
-import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -47,9 +48,7 @@ public class PlayerListener implements Listener {
         ) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                Bukkit.getScheduler().runTask(Main.getInstance(), () -> { // Run on synchronous thread
-                    onDigging(event);
-                });
+                onDigging(event);
             }
         });
 
@@ -59,14 +58,15 @@ public class PlayerListener implements Listener {
 
     // region Block Breaking Logic
     private void onDigging(PacketEvent event) {
-        if (Main.doDebugLog())
-            event.getPlayer().sendMessage("Digging");
 
         PacketContainer packet = event.getPacket();
 
         Player player = event.getPlayer();
         PlayerDigType status = packet.getPlayerDigTypes().read(0);
         BlockPosition blockLocation = packet.getBlockPositionModifier().read(0);
+
+        if (Main.doDebugLog())
+            event.getPlayer().sendMessage("Digging(" + status.name() + ")");
 
         Location location = blockLocation.toLocation(player.getWorld());
         Block block = location.getBlock();
@@ -75,10 +75,35 @@ public class PlayerListener implements Listener {
         if (!manager.contains(block))
             return;
 
-        if (status == PlayerDigType.START_DESTROY_BLOCK) {
-            startMining(player, block);
-        } else {
-            abortMining(player, block);
+        switch (status) {
+            case START_DESTROY_BLOCK -> {
+                MiningStatus miningStatus = playersMining.getOrDefault(player.getUniqueId(), null);
+                if (miningStatus != null) {
+                    if (miningStatus.didStop) {
+                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> startMining(player, block), 1);
+                        return;
+                    }
+                    return;
+                }
+
+                Bukkit.getScheduler().runTask(Main.getInstance(), () -> { // Run on synchronous thread
+                    startMining(player, block);
+                });
+            }
+            case SWAP_HELD_ITEMS, ABORT_DESTROY_BLOCK -> {
+                MiningStatus miningStatus = playersMining.getOrDefault(player.getUniqueId(), null);
+                if (miningStatus != null)
+                    miningStatus.didStop = true;
+
+                Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> { // Run on synchronous thread
+                    abortMining(player, block);
+                }, 1);
+            }
+            default -> {
+                Bukkit.getScheduler().runTask(Main.getInstance(), () -> { // Run on synchronous thread
+                    abortMining(player, block);
+                });
+            }
         }
     }
 
@@ -100,7 +125,7 @@ public class PlayerListener implements Listener {
         event.setInstaBreak(false); // Disable insta-break for blocks like mushroom blocks
 
         BlockConfig config = manager.getBlockConfig(block);
-        BreakModifierMap map = config.getBlockInfo().modifierMap();
+        StateModifierMap map = config.getBlockInfo().modifierMap();
 
         // See if you should insta-break the block
         if (config.getHardness().calculateHardnessTicks(map, player) > 0)
@@ -125,8 +150,17 @@ public class PlayerListener implements Listener {
 
 
         Player player = event.getPlayer();
-        if (!playersMining.containsKey(player.getUniqueId()))
+        MiningStatus status = playersMining.getOrDefault(player.getUniqueId(), null);
+        if (status == null)
             return;
+
+        if (status.didStop) {
+            status.didStop = false;
+            abortMining(player, block);
+            startMining(player, block);
+            event.setCancelled(true);
+            return;
+        }
 
         // Disable drops if wanted
         BlockConfig config = manager.getBlockConfig(block);
@@ -154,6 +188,9 @@ public class PlayerListener implements Listener {
 
     public void stopMining(Player player, Block block) {
         MiningStatus status = playersMining.get(player.getUniqueId());
+        if (status == null)
+            return;
+
         status.applyOldPotionEffects();
 
         playersMining.remove(player.getUniqueId());
@@ -185,9 +222,10 @@ public class PlayerListener implements Listener {
 
     // region Animation
     public void playAnimation(Player player) {
+        System.out.println("Play Animation");
         PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.ANIMATION);
         packetContainer.getIntegers().write(0, player.getEntityId());
-        packetContainer.getIntegers().write(0, 1);
+        packetContainer.getIntegers().write(1, 0);
         try {
             Main.getProtocolManager().sendServerPacket(player, packetContainer);
         } catch (InvocationTargetException e) {
@@ -210,6 +248,9 @@ public class PlayerListener implements Listener {
     public void animationTask() {
         Collection<MiningStatus> statuses = playersMining.values();
         for (MiningStatus status : statuses) {
+            if (!status.usePacketAnimations)
+                return;
+
             status.ticksSinceLastAnimation += repeatTime;
             if (status.ticksSinceLastAnimation >= animationTime) {
                 playAnimation(status.player);
@@ -230,6 +271,8 @@ public class PlayerListener implements Listener {
         public Player player;
         public Block block;
         public int ticksSinceLastAnimation = 0;
+        public boolean didStop = false;
+        public boolean usePacketAnimations = false;
 
         PotionEffect slowDiggingEffect;
         PotionEffect fastDiggingEffect;
@@ -262,8 +305,10 @@ public class PlayerListener implements Listener {
         }
 
         public EffectValues getEffectValues() {
-            BreakModifierMap modifierMap = BlockDatabase.getInstance().getModifierMap(block);
-            return config.getEffectValues(modifierMap, player, getHeldItem(), block);
+            StateModifierMap modifierMap = BlockDatabase.getInstance().getModifierMap(block);
+            EffectValues values = config.getEffectValues(modifierMap, player, getHeldItem(), block);
+            usePacketAnimations = values.usePacketAnimations;
+            return values;
         }
 
         private ItemStack getHeldItem() {

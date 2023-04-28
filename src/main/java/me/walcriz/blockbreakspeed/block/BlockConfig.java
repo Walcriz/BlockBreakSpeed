@@ -2,11 +2,9 @@ package me.walcriz.blockbreakspeed.block;
 
 import me.walcriz.blockbreakspeed.EffectValues;
 import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.material.IMaterial;
-import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
+import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
-import me.walcriz.blockbreakspeed.exceptions.TargetCalculationException;
-import me.walcriz.blockbreakspeed.exceptions.TargetNegativeException;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,8 +15,8 @@ import java.util.function.Function;
 public class BlockConfig {
     private boolean cancelBreakEvent = false;
 
-    private IMaterial<?> material;
-    public IMaterial<?> getMaterial() { return material; }
+    private BlockMaterial<?> material;
+    public BlockMaterial<?> getMaterial() { return material; }
     private Hardness hardness;
     public Hardness getHardness() { return hardness; }
     private BlockInfo blockInfo;
@@ -26,7 +24,7 @@ public class BlockConfig {
     private boolean suppressDrops = false;
     public boolean doSuppressDrops() { return suppressDrops; }
 
-    public BlockConfig(Hardness hardness, IMaterial<?> material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) throws TargetNegativeException {
+    public BlockConfig(Hardness hardness, BlockMaterial<?> material, boolean suppressDrops, String[] modifierStrings, String[] triggerStrings) {
         this.material = material;
         this.hardness = hardness;
         this.suppressDrops = suppressDrops;
@@ -38,7 +36,7 @@ public class BlockConfig {
     }
 
     private void createBlockInfo(String[] modifierStrings, String[] triggerStrings) {
-        blockInfo = new BlockInfo(new BreakModifierMap(), new TriggerMap());
+        blockInfo = new BlockInfo(new StateModifierMap(), new TriggerMap());
         blockInfo.populateInfo(modifierStrings, triggerStrings);
     }
 
@@ -55,14 +53,8 @@ public class BlockConfig {
      * @param heldItem The current held item for the player
      * @param block The block being mined
      * @return The calculated or cached {@link EffectValues} to apply
-     * @throws TargetCalculationException Thrown if the target could not be reached
      */
-    public EffectValues getEffectValues(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) throws TargetCalculationException {
-//        if (heldItem == null && effectValuesCache.containsKey(Material.AIR)) // If we already know the solution stop
-//            return effectValuesCache.get(block.getType());
-//        else if (heldItem != null && effectValuesCache.containsKey(heldItem.getType()))
-//            return effectValuesCache.get(heldItem.getType());
-
+    public EffectValues getEffectValues(StateModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
         if (cancelBreakEvent)
             return new EffectValues(0, 0);
 
@@ -74,7 +66,7 @@ public class BlockConfig {
         // (5 * ht) / f(y) = x
         // where ht = hardnessTarget
 
-        Function<Integer, Double> solveForX = (y) -> ((1 / hasteIncrease) * speedMultiplierDiff) / getFatuigeMultiplier(y) - 1 / hasteIncrease;
+        Function<Integer, Double> solveForX = (y) -> ((1 / hasteIncrease) * speedMultiplierDiff) / getFatigueMultiplier(y) - 1 / hasteIncrease;
 
         int xValue = -1;
         int yValue = -1;
@@ -119,43 +111,9 @@ public class BlockConfig {
             Main.getPluginLogger().info(effectValues.toString());
 
         return effectValues;
-
-//        Function<Double, Double> solveForY = (x) -> Math.log(hardnessTarget / (hasteIncrease * x + 1)) / Math.log(fatigueMultiplier);
-//
-//        int xValue = -1;
-//        int yValue = -1;
-//        for (int x = 0; x < hasteMaxLevel; x++) {
-//            double y = solveForY.apply((double) x);
-//
-//            if (y < 0) // y cant be less than 0
-//                continue;
-//
-//            if (y > fatigueMaxLevel) // y cant be higher than 4 (A minecraft restriction)
-//                break; // This means that we already failed/found to find a whole number value (We will use the rounded value)
-//
-//            if (y % 1 == 0) { // Prefer whole numbers
-//                xValue = x;
-//                yValue = (int) Math.round(y);
-//                break; // We know two very good values. Stop iterating
-//            } else if (yValue < 0) { // If we have no value use that
-//                xValue = x;
-//                yValue = (int) Math.round(y);
-//            }
-//        }
-//
-//        if (yValue < 0)
-//            throw new TargetCalculationException("Failed to find a non negative y value for block: " + material.getName() + "! Was: hardnessTarget=" + hardnessTarget + " | x=" + xValue + " | y=" + yValue);
-//
-//        EffectValues effectValues = new EffectValues(xValue, yValue);
-////        effectValuesCache.put(itemMaterial, effectValues);
-//
-//        if (Main.doDebugLog())
-//            Main.logger.info(effectValues.toString());
-//
-//        return effectValues;
     }
 
-    private double getFatuigeMultiplier(int level) {
+    private double getFatigueMultiplier(int level) {
         return switch (level) {
             case 0 -> 1.0;
             case 1 -> 0.3;

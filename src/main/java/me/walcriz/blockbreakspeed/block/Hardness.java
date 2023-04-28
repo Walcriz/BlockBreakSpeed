@@ -1,6 +1,6 @@
 package me.walcriz.blockbreakspeed.block;
 
-import me.walcriz.blockbreakspeed.block.state.BreakModifierMap;
+import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -11,14 +11,14 @@ import org.jetbrains.annotations.Nullable;
 public record Hardness(int base, int min, int max) {
 
     /**
-     * Calculate the speed multiplier (hardness in procent) in procent. Used in the {@link BlockConfig#getEffectValues(BreakModifierMap, Player, ItemStack, Block)} calculation
+     * Calculate the speed multiplier (hardness in procent) in procent. Used in the {@link BlockConfig#getEffectValues(StateModifierMap, Player, ItemStack, Block)} calculation
      * @param modifierMap The current active states for the block
      * @param player The player trying to mine the block
      * @param block The block that is being mined
      * @return Our target hardness in procent
      * @see <a href="https://minecraft.fandom.com/wiki/Breaking#Calculation">How minecraft calculates hardness</a>
      */
-    public double calculateSpeedDiff(BreakModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
+    public double calculateSpeedDiff(StateModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
         boolean isValidTool = heldItem != null && block.isValidTool(heldItem);
         boolean isPreferredTool = heldItem != null && block.isPreferredTool(heldItem);
         boolean requiresValidTool = block.getBlockData().requiresCorrectToolForDrops();
@@ -58,7 +58,7 @@ public record Hardness(int base, int min, int max) {
         return multiplierDiff;
     }
 
-    public int calculateHardnessTicks(BreakModifierMap modifierMap, Player player) {
+    public int calculateHardnessTicks(StateModifierMap modifierMap, Player player) {
         int tickModifier = modifierMap.getCurrentModifiers(player);
 
         if (tickModifier > max())

@@ -1,26 +1,24 @@
 package me.walcriz.blockbreakspeed.block.trigger;
 
 import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.IType;
-import me.walcriz.blockbreakspeed.block.trigger.providers.CommandTriggerProvider;
+import me.walcriz.blockbreakspeed.block.trigger.actions.CommandTriggerAction;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
-public enum TriggerProviderType implements IType<ITriggerProvider> {
-    CommandProvider(CommandTriggerProvider.class, "command"),
+public enum TriggerActionType implements ITriggerActionType<ITriggerAction> {
+    CommandProvider(CommandTriggerAction.class, "command"),
     ;
 
-    private Class<? extends ITriggerProvider> type;
+    private Class<? extends ITriggerAction> type;
     private String configName;
 
-    TriggerProviderType(Class<? extends ITriggerProvider> type, String configName) {
+    TriggerActionType(Class<? extends ITriggerAction> type, String configName) {
         this.type = type;
         this.configName = configName;
     }
 
-    public static ITriggerProvider toProvider(String key, String value) {
-        for (TriggerProviderType type : TriggerProviderType.values()) {
+    public static ITriggerAction toAction(String key, String value) {
+        for (TriggerActionType type : TriggerActionType.values()) {
             if (!key.equals(type.configName))
                 continue;
 
@@ -37,7 +35,7 @@ public enum TriggerProviderType implements IType<ITriggerProvider> {
     }
 
     @Override
-    public Class<? extends ITriggerProvider> getTypeClass() {
+    public Class<? extends ITriggerAction> getTypeClass() {
         return type;
     }
 
