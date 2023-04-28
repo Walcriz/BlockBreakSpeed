@@ -1,5 +1,6 @@
 package me.walcriz.blockbreakspeed.block;
 
+import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
 import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerMap;
@@ -17,14 +18,18 @@ public final class BlockDatabase {
 
     private BlockDatabase() {}
 
-    private BlockConfigMap blockConfigMap = new BlockConfigMap(); // TODO: Populate this map
+    private BlockConfigMap blockConfigMap = new BlockConfigMap();
 
     public StateModifierMap getModifierMap(Block block) {
         return blockConfigMap.get(block).getBlockInfo().modifierMap();
     }
 
     public TriggerMap getTriggerMap(Block block) {
-        return blockConfigMap.get(block).getBlockInfo().triggerMap();
+        var config = blockConfigMap.get(block);
+        if (config == null)
+            return null;
+
+        return config.getBlockInfo().triggerMap();
     }
 
     public BlockInfo getBlockInformation(Block block) {
@@ -39,8 +44,8 @@ public final class BlockDatabase {
         return blockConfigMap.get(block);
     }
 
-    public boolean contains(Block material) {
-        return blockConfigMap.containsKey(material);
+    public boolean contains(Block block) {
+        return blockConfigMap.containsKey(block);
     }
 
     public void addConfig(BlockMaterial<?> blockType, BlockConfig config) {
@@ -49,6 +54,9 @@ public final class BlockDatabase {
 
     public void executeTriggers(Player player, Block block, TriggerType type) {
         TriggerMap triggers = getTriggerMap(block);
+        if (triggers == null)
+            return;
+
         if (triggers.containsKey(type))
             triggers.get(type).executeTriggers(player, block);
     }

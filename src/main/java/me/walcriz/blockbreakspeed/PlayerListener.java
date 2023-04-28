@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -47,9 +48,7 @@ public class PlayerListener implements Listener {
         ) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
-                Bukkit.getScheduler().runTask(Main.getInstance(), () -> { // Run on synchronous thread
-                    onDigging(event);
-                });
+                onDigging(event);
             }
         });
 
@@ -59,14 +58,15 @@ public class PlayerListener implements Listener {
 
     // region Block Breaking Logic
     private void onDigging(PacketEvent event) {
-        if (Main.doDebugLog())
-            event.getPlayer().sendMessage("Digging");
 
         PacketContainer packet = event.getPacket();
 
         Player player = event.getPlayer();
         PlayerDigType status = packet.getPlayerDigTypes().read(0);
         BlockPosition blockLocation = packet.getBlockPositionModifier().read(0);
+
+        if (Main.doDebugLog())
+            event.getPlayer().sendMessage("Digging(" + status.name() + ")");
 
         Location location = blockLocation.toLocation(player.getWorld());
         Block block = location.getBlock();
@@ -75,10 +75,35 @@ public class PlayerListener implements Listener {
         if (!manager.contains(block))
             return;
 
-        if (status == PlayerDigType.START_DESTROY_BLOCK) {
-            startMining(player, block);
-        } else {
-            abortMining(player, block);
+        switch (status) {
+            case START_DESTROY_BLOCK -> {
+                MiningStatus miningStatus = playersMining.getOrDefault(player.getUniqueId(), null);
+                if (miningStatus != null) {
+                    if (miningStatus.didStop) {
+                        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> startMining(player, block), 1);
+                        return;
+                    }
+                    return;
+                }
+
+                Bukkit.getScheduler().runTask(Main.getInstance(), () -> { // Run on synchronous thread
+                    startMining(player, block);
+                });
+            }
+            case SWAP_HELD_ITEMS, ABORT_DESTROY_BLOCK -> {
+                MiningStatus miningStatus = playersMining.getOrDefault(player.getUniqueId(), null);
+                if (miningStatus != null)
+                    miningStatus.didStop = true;
+
+                Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> { // Run on synchronous thread
+                    abortMining(player, block);
+                }, 1);
+            }
+            default -> {
+                Bukkit.getScheduler().runTask(Main.getInstance(), () -> { // Run on synchronous thread
+                    abortMining(player, block);
+                });
+            }
         }
     }
 
@@ -125,8 +150,17 @@ public class PlayerListener implements Listener {
 
 
         Player player = event.getPlayer();
-        if (!playersMining.containsKey(player.getUniqueId()))
+        MiningStatus status = playersMining.getOrDefault(player.getUniqueId(), null);
+        if (status == null)
             return;
+
+        if (status.didStop) {
+            status.didStop = false;
+            abortMining(player, block);
+            startMining(player, block);
+            event.setCancelled(true);
+            return;
+        }
 
         // Disable drops if wanted
         BlockConfig config = manager.getBlockConfig(block);
@@ -154,6 +188,9 @@ public class PlayerListener implements Listener {
 
     public void stopMining(Player player, Block block) {
         MiningStatus status = playersMining.get(player.getUniqueId());
+        if (status == null)
+            return;
+
         status.applyOldPotionEffects();
 
         playersMining.remove(player.getUniqueId());
@@ -230,6 +267,7 @@ public class PlayerListener implements Listener {
         public Player player;
         public Block block;
         public int ticksSinceLastAnimation = 0;
+        public boolean didStop = false;
 
         PotionEffect slowDiggingEffect;
         PotionEffect fastDiggingEffect;

@@ -19,7 +19,7 @@ public class VanillaMaterialProvider extends IMaterialProvider<Material> {
 
     @Override
     public BlockMaterial<Material> materialFromString(String string) {
-        Material material = Material.getMaterial(string);
+        Material material = Material.getMaterial(string.toUpperCase());
         if (material == null)
             return null;
 

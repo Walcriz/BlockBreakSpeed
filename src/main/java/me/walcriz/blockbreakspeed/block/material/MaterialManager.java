@@ -1,5 +1,6 @@
 package me.walcriz.blockbreakspeed.block.material;
 
+import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.material.impl.VanillaMaterialProvider;
 import me.walcriz.blockbreakspeed.utils.Pair;
 import org.bukkit.Material;
