@@ -222,9 +222,10 @@ public class PlayerListener implements Listener {
 
     // region Animation
     public void playAnimation(Player player) {
+        System.out.println("Play Animation");
         PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.ANIMATION);
         packetContainer.getIntegers().write(0, player.getEntityId());
-        packetContainer.getIntegers().write(0, 1);
+        packetContainer.getIntegers().write(1, 0);
         try {
             Main.getProtocolManager().sendServerPacket(player, packetContainer);
         } catch (InvocationTargetException e) {
@@ -247,6 +248,9 @@ public class PlayerListener implements Listener {
     public void animationTask() {
         Collection<MiningStatus> statuses = playersMining.values();
         for (MiningStatus status : statuses) {
+            if (!status.usePacketAnimations)
+                return;
+
             status.ticksSinceLastAnimation += repeatTime;
             if (status.ticksSinceLastAnimation >= animationTime) {
                 playAnimation(status.player);
@@ -268,6 +272,7 @@ public class PlayerListener implements Listener {
         public Block block;
         public int ticksSinceLastAnimation = 0;
         public boolean didStop = false;
+        public boolean usePacketAnimations = false;
 
         PotionEffect slowDiggingEffect;
         PotionEffect fastDiggingEffect;
@@ -301,7 +306,9 @@ public class PlayerListener implements Listener {
 
         public EffectValues getEffectValues() {
             StateModifierMap modifierMap = BlockDatabase.getInstance().getModifierMap(block);
-            return config.getEffectValues(modifierMap, player, getHeldItem(), block);
+            EffectValues values = config.getEffectValues(modifierMap, player, getHeldItem(), block);
+            usePacketAnimations = values.usePacketAnimations;
+            return values;
         }
 
         private ItemStack getHeldItem() {
