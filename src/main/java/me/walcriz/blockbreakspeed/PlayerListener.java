@@ -204,8 +204,18 @@ public class PlayerListener implements Listener {
     public void applyEffects(Player player, MiningStatus status) {
         EffectValues values = status.getEffectValues();
 
-        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, -1, values.hasteValue, false, false, false);
-        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, -1, values.fatigueValue, false, false, false);
+        var oldFastEffect = status.fastDiggingEffect;
+        var oldSlowEffect = status.slowDiggingEffect;
+
+        PotionEffect hasteEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, -1,
+                values.hasteValue, false,
+                oldFastEffect != null && oldFastEffect.hasParticles(),
+                oldFastEffect != null && oldFastEffect.hasIcon());
+
+        PotionEffect fatigueEffect = new PotionEffect(PotionEffectType.SLOW_DIGGING, -1,
+                values.fatigueValue, false,
+                oldSlowEffect != null && oldSlowEffect.hasParticles(),
+                oldSlowEffect != null && oldSlowEffect.hasIcon());
 
         player.addPotionEffect(hasteEffect);
         player.addPotionEffect(fatigueEffect);
