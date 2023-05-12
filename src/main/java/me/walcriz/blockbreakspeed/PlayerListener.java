@@ -53,7 +53,7 @@ public class PlayerListener implements Listener {
         });
 
         // Start animation task
-        runAnimationTask();
+        // runAnimationTask();
     }
 
     // region Block Breaking Logic
