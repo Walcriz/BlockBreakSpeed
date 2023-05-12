@@ -1,10 +1,7 @@
 package me.walcriz.blockbreakspeed.block.state;
 
 import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.state.providers.EffectStateProvider;
-import me.walcriz.blockbreakspeed.block.state.providers.HeldItemStateProvider;
-import me.walcriz.blockbreakspeed.block.state.providers.NBTStrStateProvider;
-import me.walcriz.blockbreakspeed.block.state.providers.SneakingStateProvider;
+import me.walcriz.blockbreakspeed.block.state.providers.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -29,6 +26,9 @@ public class StateManager {
         registerProvider("effect", new EffectStateProvider());
         registerProvider("sneaking", new SneakingStateProvider());
         registerProvider("nbtstr", new NBTStrStateProvider());
+
+        if (Main.hasMMOCore())
+            registerProvider("mmoprof", new MMOProfStateProvider());
     }
 
     public void registerProvider(String typeCode, IStateProvider<?> provider) {

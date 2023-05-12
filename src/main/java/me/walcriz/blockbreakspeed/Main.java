@@ -8,6 +8,7 @@ import me.walcriz.blockbreakspeed.block.material.BlockMaterial;
 import me.walcriz.blockbreakspeed.block.material.MaterialManager;
 import me.walcriz.blockbreakspeed.commands.AdminCommand;
 import me.walcriz.blockbreakspeed.block.BlockConfig;
+import net.Indyuce.mmocore.api.MMOCoreAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,6 +28,9 @@ public final class Main extends JavaPlugin {
 
     private static ProtocolManager protocolManager;
     public static ProtocolManager getProtocolManager() { return protocolManager; }
+
+    private static MMOCoreAPI mmoCoreAPI;
+    public static MMOCoreAPI getMMOCoreAPI() { return mmoCoreAPI; }
 
     private static Config config;
     public static Config getConfiguration() { return config; }
@@ -56,6 +60,9 @@ public final class Main extends JavaPlugin {
         // Plugin startup logic
         instance = this;
         logger = this.getLogger();
+
+        if (hasMMOCore())
+            mmoCoreAPI = new MMOCoreAPI(this);
 
         if (!isMock) {
             logger.info("Loading configs...");
