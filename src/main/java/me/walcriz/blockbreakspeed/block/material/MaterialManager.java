@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 
 import java.util.*;
 
-public class MaterialManager {
+public final class MaterialManager {
 
     private static MaterialManager instance;
     public static MaterialManager getInstance() {

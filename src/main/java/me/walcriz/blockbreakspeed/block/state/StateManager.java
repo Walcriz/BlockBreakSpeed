@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class StateManager {
+public final class StateManager {
     private static StateManager instance;
     public static StateManager getInstance() {
         if (instance == null)
