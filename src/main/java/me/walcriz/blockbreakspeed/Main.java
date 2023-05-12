@@ -38,6 +38,14 @@ public final class Main extends JavaPlugin {
 
     public static boolean doDebugLog() { return config.debugLogging; }
 
+    public static boolean hasMMOCore() {
+        return Bukkit.getPluginManager().isPluginEnabled("MMOCore");
+    }
+
+    public static boolean hasMMOItems() {
+        return Bukkit.getPluginManager().isPluginEnabled("MMOItems");
+    }
+
     @Override
     public void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
