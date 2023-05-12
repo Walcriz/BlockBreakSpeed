@@ -10,6 +10,6 @@ public class MMOProfStateProvider implements IStateProvider<MMOProfStateModifier
         int value = settings.getInteger("value", 1);
         String name = settings.getString("name", "");
         int level = settings.getInteger("level", 0);
-        return null;
+        return new MMOProfStateModifier(value, name, level);
     }
 }
