@@ -3,6 +3,7 @@ package me.walcriz.blockbreakspeed.block.state;
 import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.state.providers.EffectStateProvider;
 import me.walcriz.blockbreakspeed.block.state.providers.HeldItemStateProvider;
+import me.walcriz.blockbreakspeed.block.state.providers.NBTStrProvider;
 import me.walcriz.blockbreakspeed.block.state.providers.SneakingStateProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +28,7 @@ public class StateManager {
         registerProvider("helditem", new HeldItemStateProvider());
         registerProvider("effect", new EffectStateProvider());
         registerProvider("sneaking", new SneakingStateProvider());
+        registerProvider("nbtstr", new NBTStrProvider());
     }
 
     public void registerProvider(String typeCode, IStateProvider<?> provider) {
