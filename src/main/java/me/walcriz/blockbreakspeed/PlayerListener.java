@@ -12,6 +12,7 @@ import me.walcriz.blockbreakspeed.block.BlockConfig;
 import me.walcriz.blockbreakspeed.block.BlockDatabase;
 import me.walcriz.blockbreakspeed.block.state.StateModifierMap;
 import me.walcriz.blockbreakspeed.block.trigger.TriggerType;
+import me.walcriz.blockbreakspeed.utils.StringHelpers;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -65,8 +66,7 @@ public class PlayerListener implements Listener {
         PlayerDigType status = packet.getPlayerDigTypes().read(0);
         BlockPosition blockLocation = packet.getBlockPositionModifier().read(0);
 
-        if (Main.doDebugLog())
-            event.getPlayer().sendMessage("Digging(" + status.name() + ")");
+        StringHelpers.debugPlayerMsg(event.getPlayer(), "Digging(" + status.name() + ")");
 
         Location location = blockLocation.toLocation(player.getWorld());
         Block block = location.getBlock();
@@ -109,8 +109,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onBlockDamage(BlockDamageEvent event) {
-        if (Main.doDebugLog())
-            event.getPlayer().sendMessage("Block Damage");
+        StringHelpers.debugPlayerMsg(event.getPlayer(), "Block Damage");
 
         Player player = event.getPlayer();
         Block block = event.getBlock();
@@ -137,8 +136,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onBreakBlock(BlockBreakEvent event) {
-        if (Main.doDebugLog())
-            event.getPlayer().sendMessage("Break Block");
+        StringHelpers.debugPlayerMsg(event.getPlayer(), "Break Block");
 
         if (!event.getPlayer().getGameMode().equals(GameMode.SURVIVAL))
             return;
@@ -293,8 +291,8 @@ public class PlayerListener implements Listener {
             this.player = player;
             this.block = block;
 
-            slowDiggingEffect = player.getPotionEffect(PotionEffectType.SLOW_DIGGING);
-            fastDiggingEffect = player.getPotionEffect(PotionEffectType.FAST_DIGGING);
+            // slowDiggingEffect = player.getPotionEffect(PotionEffectType.SLOW_DIGGING);
+            // fastDiggingEffect = player.getPotionEffect(PotionEffectType.FAST_DIGGING);
 
             BlockDatabase manager = BlockDatabase.getInstance();
             config = manager.getBlockConfig(block);
