@@ -2,6 +2,7 @@ package me.walcriz.blockbreakspeed.block.state;
 
 import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.state.providers.*;
+import me.walcriz.blockbreakspeed.utils.StringHelpers;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -47,7 +48,7 @@ public final class StateManager {
 
         IStateProvider<?> provider = providers.get(typestring);
         if (provider == null) {
-            Main.getPluginLogger().severe("State with typecode: '" + typestring + "' does not exist!");
+            StringHelpers.consoleMsg("State with typecode: '" + typestring + "' does not exist!", Main.consoleTypes.SEVERE);
             return null;
         }
 

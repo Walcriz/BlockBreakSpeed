@@ -176,4 +176,8 @@ public final class Main extends JavaPlugin {
     public Main(boolean isMock) {
         this.isMock = isMock;
     }
+
+    public enum consoleTypes{
+        INFO, WARN, SEVERE
+    }
 }

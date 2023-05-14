@@ -2,6 +2,7 @@ package me.walcriz.blockbreakspeed.block.trigger;
 
 import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.trigger.actions.CommandTriggerAction;
+import me.walcriz.blockbreakspeed.utils.StringHelpers;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -26,7 +27,7 @@ public enum TriggerActionType implements ITriggerActionType<ITriggerAction> {
                 return type.createInstance(value);
             } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                      NoSuchMethodException e) {
-                Main.getPluginLogger().severe("Could not parse trigger settings for key: '" + key + "' and value: '" + value + "'");
+                StringHelpers.consoleMsg("Could not parse trigger settings for key: '" + key + "' and value: '" + value + "'", Main.consoleTypes.SEVERE);
                 e.printStackTrace();
                 return null;
             }

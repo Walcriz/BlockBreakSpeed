@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 public record Hardness(int base, int min, int max) {
 
     /**
-     * Calculate the speed multiplier (hardness in procent) in procent. Used in the {@link BlockConfig#getEffectValues(StateModifierMap, Player, ItemStack, Block)} calculation
+     * Calculate the speed multiplier (hardness in percent) in percent. Used in the {@link BlockConfig#getEffectValues(StateModifierMap, Player, ItemStack, Block)} calculation
      * @param modifierMap The current active states for the block
      * @param player The player trying to mine the block
      * @param block The block that is being mined
-     * @return Our target hardness in procent
+     * @return Our target hardness in percent
      * @see <a href="https://minecraft.fandom.com/wiki/Breaking#Calculation">How minecraft calculates hardness</a>
      */
     public double calculateSpeedDiff(StateModifierMap modifierMap, Player player, @Nullable ItemStack heldItem, Block block) {
@@ -44,15 +44,15 @@ public record Hardness(int base, int min, int max) {
         // damage = speedmilti / hardness / (reqvalidTool ? 30 : 100)
         // damage * ((reqvalidTool ? 30 : 100) * hardness = speedmulti
 
-        // hardnessProcent = speedMultiafter / speedMultiBefore
+        // hardnessPercent = speedMultiafter / speedMultiBefore
 
         int ticks = calculateHardnessTicks(modifierMap, player);
 
         // Get block max damage
         double damage = 1d / ticks;
 
-        var speedMutliplierAfter = damage * ((requiresValidTool && isValidTool) ? 30 : 100) * hardness;
-        var multiplierDiff = speedMutliplierAfter / speedMultiplier; // Now we know how much haste and fatigue should make up
+        var speedMultiplierAfter = damage * ((requiresValidTool && isValidTool) ? 30 : 100) * hardness;
+        var multiplierDiff = speedMultiplierAfter / speedMultiplier; // Now we know how much haste and fatigue should make up
         System.out.println(multiplierDiff);
 
         return multiplierDiff;
