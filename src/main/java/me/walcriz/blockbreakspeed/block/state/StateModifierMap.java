@@ -1,6 +1,7 @@
 package me.walcriz.blockbreakspeed.block.state;
 
 import me.walcriz.blockbreakspeed.block.Hardness;
+import me.walcriz.blockbreakspeed.utils.StringHelpers;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -15,7 +16,9 @@ public class StateModifierMap extends HashSet<IStateModifier> {
     public int getCurrentModifiers(Player player) {
         int value = 0;
         for (IStateModifier modifier : this) {
-            value += modifier.getModifierValueForPlayer(player);
+            var modifierValue = modifier.getModifierValueForPlayer(player);
+            StringHelpers.debugPlayerMsg(player, "Modifier value=" + modifierValue);
+            value += modifierValue;
         }
         return value;
     }
