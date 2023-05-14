@@ -1,6 +1,7 @@
 package me.walcriz.blockbreakspeed.block.material;
 
 import me.walcriz.blockbreakspeed.Main;
+import me.walcriz.blockbreakspeed.block.material.impl.MMOItemsProvider;
 import me.walcriz.blockbreakspeed.block.material.impl.VanillaMaterialProvider;
 import me.walcriz.blockbreakspeed.utils.Pair;
 import org.bukkit.Material;
@@ -8,7 +9,7 @@ import org.bukkit.block.Block;
 
 import java.util.*;
 
-public class MaterialManager {
+public final class MaterialManager {
 
     private static MaterialManager instance;
     public static MaterialManager getInstance() {
@@ -26,6 +27,11 @@ public class MaterialManager {
 
     public void registerProviders() {
         registerProvider(0, new VanillaMaterialProvider());
+
+        if (Main.hasMMOItems())
+            registerProvider(10, new MMOItemsProvider());
+
+
         providers.sort(Comparator.comparingInt(Pair::getKey));
     }
 

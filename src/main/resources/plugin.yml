@@ -7,8 +7,18 @@ website: walcriz.net
 
 depend: [ ProtocolLib ]
 
+softdepend: [ MMOCore, MMOItems ]
+
 commands:
   blockbreakspeed:
     permission: blockbreakspeed.admin
     usage: blockbreakspeed <reload|info>
     description: The blockbreakspeed admin command prefix
+
+permissions:
+  blockbreakspeed.admin:
+    description: Access to /blockbreakspeed
+    default: op
+  blockbreakspeed.admin.reload:
+    description: Access to /blockbreakspeed reload
+    default: op

@@ -1,15 +1,13 @@
 package me.walcriz.blockbreakspeed.block.state;
 
 import me.walcriz.blockbreakspeed.Main;
-import me.walcriz.blockbreakspeed.block.state.providers.EffectStateProvider;
-import me.walcriz.blockbreakspeed.block.state.providers.HeldItemStateProvider;
-import me.walcriz.blockbreakspeed.block.state.providers.SneakingStateProvider;
+import me.walcriz.blockbreakspeed.block.state.providers.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class StateManager {
+public final class StateManager {
     private static StateManager instance;
     public static StateManager getInstance() {
         if (instance == null)
@@ -27,6 +25,10 @@ public class StateManager {
         registerProvider("helditem", new HeldItemStateProvider());
         registerProvider("effect", new EffectStateProvider());
         registerProvider("sneaking", new SneakingStateProvider());
+        registerProvider("nbtstr", new NBTStrStateProvider());
+
+        if (Main.hasMMOCore())
+            registerProvider("mmoprof", new MMOProfStateProvider());
     }
 
     public void registerProvider(String typeCode, IStateProvider<?> provider) {
