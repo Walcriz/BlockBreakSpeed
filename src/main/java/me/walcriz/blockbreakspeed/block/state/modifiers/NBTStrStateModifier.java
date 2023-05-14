@@ -1,5 +1,6 @@
 package me.walcriz.blockbreakspeed.block.state.modifiers;
 
+import de.tr7zw.changeme.nbtapi.NBT;
 import me.walcriz.blockbreakspeed.Main;
 import me.walcriz.blockbreakspeed.block.state.IStateModifier;
 import me.walcriz.blockbreakspeed.utils.StringHelpers;
@@ -21,11 +22,7 @@ public record NBTStrStateModifier(int value, String key, String nbtValue) implem
 
         StringHelpers.debugPlayerMsg(player, "Is holding something");
 
-        ItemMeta itemMeta = heldItem.getItemMeta();
-        PersistentDataContainer dataContainer = itemMeta.getPersistentDataContainer();
-        NamespacedKey dataKey = new NamespacedKey(Main.getInstance(), key());
-        String data = dataContainer.get(dataKey, PersistentDataType.STRING);
-        StringHelpers.debugPlayerMsg(player, "Got data: " + data);
+        String data = NBT.get(heldItem, (nbt) -> nbt.getString(key()));
 
         if (data != null && data.equals(nbtValue()))
             return value();
