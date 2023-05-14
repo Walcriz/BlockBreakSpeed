@@ -17,7 +17,7 @@ public class StateModifierMap extends HashSet<IStateModifier> {
         int value = 0;
         for (IStateModifier modifier : this) {
             var modifierValue = modifier.getModifierValueForPlayer(player);
-            StringHelpers.debugPlayerMsg(player, "Modifier value=" + modifierValue);
+            StringHelpers.debugPlayerMsg(player, "Modifier value=" + modifierValue + " for modifier: " + modifier.getClass().getName());
             value += modifierValue;
         }
         return value;

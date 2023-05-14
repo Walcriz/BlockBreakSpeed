@@ -59,14 +59,14 @@ public record Hardness(int base, int min, int max) {
     }
 
     public int calculateHardnessTicks(StateModifierMap modifierMap, Player player) {
-        int tickModifier = modifierMap.getCurrentModifiers(player);
+        int tickModifier = base() - modifierMap.getCurrentModifiers(player);
 
         if (tickModifier > max())
             tickModifier = max();
         else if (tickModifier < min())
             tickModifier = min();
 
-        return base() - tickModifier;
+        return tickModifier;
     }
 
     private int getToolMultiplier(Material material) {
