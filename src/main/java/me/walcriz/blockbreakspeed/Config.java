@@ -25,10 +25,10 @@ public class Config {
     public void reloadConfig(Main main) {
         FileConfiguration config = main.getConfig();
 
-        this.disableAnimations = config.getBoolean("animations.disable");
-        this.animationDelay = config.getInt("animations.delay");
+//        this.disableAnimations = config.getBoolean("animations.disable");
+//        this.animationDelay = config.getInt("animations.delay");
         this.debugLogging = config.getBoolean("debug-logging");
-        this.animationTaskRepeatTime = config.getInt("animations.task-repeat-time");
+//        this.animationTaskRepeatTime = config.getInt("animations.task-repeat-time");
     }
 
     public boolean disableAnimations = true;

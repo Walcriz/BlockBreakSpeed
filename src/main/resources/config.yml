@@ -2,13 +2,13 @@
 # Enable debug logging. (Be warned this will send a lot of messages in player & server logs/chats)
 debug-logging: false
 
-animations:
-  # Disable packets that make the hand animate
-  disable: false
-
-  # The delay in TICKS between the player playing the "swing" animation
-  delay: 3
-
-  # The time between each animation send check.
-  # This should probably be left at 1. Only change it if you're having performance issues.
-  task-repeat-time: 1
+#animations:
+#  # Disable packets that make the hand animate
+#  disable: false
+#
+#  # The delay in TICKS between the player playing the "swing" animation
+#  delay: 3
+#
+#  # The time between each animation send check.
+#  # This should probably be left at 1. Only change it if you're having performance issues.
+#  task-repeat-time: 1
