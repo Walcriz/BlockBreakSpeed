@@ -19,10 +19,13 @@ public record NBTStrStateModifier(int value, String key, String nbtValue) implem
         if (heldItem.getType() == Material.AIR)
             return 0;
 
+        StringHelpers.debugPlayerMsg(player, "Is holding something");
+
         ItemMeta itemMeta = heldItem.getItemMeta();
         PersistentDataContainer dataContainer = itemMeta.getPersistentDataContainer();
         NamespacedKey dataKey = new NamespacedKey(Main.getInstance(), key());
         String data = dataContainer.get(dataKey, PersistentDataType.STRING);
+        StringHelpers.debugPlayerMsg(player, "Got data: " + data);
 
         if (data != null && data.equals(nbtValue()))
             return value();
