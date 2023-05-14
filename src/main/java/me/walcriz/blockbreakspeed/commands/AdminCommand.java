@@ -23,9 +23,10 @@ public class AdminCommand implements ICommand {
 
                 Main.getInstance().reloadConfigs();
                 this.messageSender(sender, "[BBS] Successfully reloaded configs!");
-
+                return true;
             case "info":
                 sender.sendMessage("[BBS] A semi drop in replacement for Breaker 2 made by Walcriz");
+                return true;
             default:
                 sender.sendMessage("[BBS] Wrong usage. Usage: blockbreakspeed <reload|info>");
                 return true;
