@@ -3,6 +3,8 @@ A **semi** drop-in replacement for **Breaker2** that uses potion effects to mini
 
 Tested versions: 1.19.4
 
+> :warning: This plugin is not being worked on and was more of a tech demo, the code *works* but the limitations of the plugin using potion effects were too big to even consider using.
+
 ## Benefits
 - It sends way less packets to the client (*the reason this was made*)
 - Reduces chances of desync between server and client (*Needs more testing*)
@@ -17,6 +19,3 @@ Tested versions: 1.19.4
 ## Issues & Pull requests
 - If you have found an issue please create a new issue with a fitting name.
 - Feel free to create a pull request if you feel a feature is missing.
-
-## REMEMBER
-THIS PLUGIN MAY NOT RECIEVE SUPPORT OF ANY KIND!
