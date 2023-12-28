@@ -3,6 +3,8 @@ A **semi** drop-in replacement for **Breaker2** that uses potion effects to mini
 
 Tested versions: 1.19.4
 
+> :warning: This is ARCHIVED and will not be updated. The code *works* but the limitations of this method were too big to even consider using
+
 ## Benefits
 - It sends way less packets to the client (*the reason this was made*)
 - Reduces chances of desync between server and client (*Needs more testing*)
@@ -13,10 +15,3 @@ Tested versions: 1.19.4
 - It does not include all features that **Breaker2** offers. It is very limited in scope. Such features may include:
   - **Exact** break time (*It will estimate*)
   - All state state/trigger providers supported by **Breaker2**
-
-## Issues & Pull requests
-- If you have found an issue please create a new issue with a fitting name.
-- Feel free to create a pull request if you feel a feature is missing.
-
-## REMEMBER
-THIS PLUGIN MAY NOT RECIEVE SUPPORT OF ANY KIND!
